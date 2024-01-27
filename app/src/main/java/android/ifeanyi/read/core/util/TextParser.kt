@@ -2,7 +2,6 @@ package android.ifeanyi.read.core.util
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.runtime.MutableState
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -21,7 +20,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object TextParser {
-    fun parsePdf(context: Context, uri: Uri, result: MutableState<String?>) {
+    fun parsePdf(context: Context, uri: Uri, onComplete: (result: String) -> Unit) {
         try {
             PDFBoxResourceLoader.init(context)
             val inputStream = context.contentResolver.openInputStream(uri)
@@ -29,20 +28,22 @@ object TextParser {
             val stripper = PDFTextStripper()
             stripper.startPage = 0
             stripper.endPage = 1
-            result.value = stripper.getText(doc)
+            val result = stripper.getText(doc).replace("\n", " ")
+            onComplete.invoke(result)
         } catch (e: IOException) {
             e.printStackTrace()
         }
     }
 
-    fun parseImage(context: Context, uri: Uri, result: MutableState<String?>) {
+    fun parseImage(context: Context, uri: Uri, onComplete: (result: String) -> Unit) {
         try {
             val image = InputImage.fromFilePath(context, uri)
 
             val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
             recognizer.process(image)
                 .addOnSuccessListener {
-                    result.value = it.text
+                    val result = it.text.replace("\n", " ")
+                    onComplete.invoke(result)
                 }
                 .addOnFailureListener { }
 
@@ -52,7 +53,7 @@ object TextParser {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun parseUrl(link: String, result: MutableState<String?>) {
+    fun parseUrl(link: String, onComplete: (result: String) -> Unit) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val url = URL(link)
@@ -71,7 +72,8 @@ object TextParser {
                 val htmlString = htmlStringBuilder.toString()
 
                 val doc = Jsoup.parse(htmlString)
-                result.value = doc.text()
+                val result = doc.text().replace("\n", " ")
+                onComplete.invoke(result)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
