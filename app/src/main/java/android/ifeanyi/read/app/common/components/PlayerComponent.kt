@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.ButtonDefaults
@@ -93,14 +94,26 @@ fun PlayerComponent() {
                             Spacer(modifier = Modifier.weight(1f))
                             IconButton(
                                 onClick = {
-                                    if (state.isPlaying) SpeechService.stop() else SpeechService.play(
+                                    SpeechService.stop()
+                                },
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(40.dp),
+                                    imageVector = Icons.Rounded.Stop,
+                                    contentDescription = "Stop Button",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    if (state.isPlaying) SpeechService.pause() else SpeechService.play(
                                         context = context
                                     )
                                 },
                             ) {
                                 Icon(
                                     modifier = Modifier.size(40.dp),
-                                    imageVector = if (state.isPlaying) Icons.Rounded.Stop else Icons.Rounded.PlayArrow,
+                                    imageVector = if (state.isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                                     contentDescription = "Play/Pause Button",
                                     tint = MaterialTheme.colorScheme.primary
                                 )

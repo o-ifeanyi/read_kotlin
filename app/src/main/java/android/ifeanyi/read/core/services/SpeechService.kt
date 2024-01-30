@@ -26,13 +26,23 @@ object SpeechService : ViewModel() {
 
     private var _textToSpeech: TextToSpeech? = null
 
+    private var _words: List<String> = emptyList()
+    private var _wordIndex = 0
     private var _textCount: Int = 0
 
     fun updateText(text: String) = viewModelScope.launch {
+        _textCount = text.length
+        _words = text.split(" ")
         _state.update { it.copy(text = text) }
     }
 
+    fun pause() {
+        _textToSpeech?.stop()
+    }
+
     fun stop() {
+        _wordIndex = 0
+        _state.update { it.copy(wordRange = IntRange(0, 0), progress = 0f)}
         _textToSpeech?.stop()
     }
 
@@ -41,14 +51,12 @@ object SpeechService : ViewModel() {
             context
         ) { res ->
             if (res == TextToSpeech.SUCCESS) {
-                _textCount = _state.value.text.length
-                println(_textCount)
                 _textToSpeech?.let { speaker ->
                     speaker.language = Locale.US
                     speaker.setSpeechRate(1.2f)
                     speaker.setOnUtteranceProgressListener(ProgressListener())
                     speaker.speak(
-                        _state.value.text.take(4000),
+                        _state.value.text.take(4000).substring(_state.value.wordRange.first),
                         TextToSpeech.QUEUE_FLUSH,
                         null,
                         "utteranceId" // required for listener to work
@@ -64,6 +72,7 @@ object SpeechService : ViewModel() {
         }
 
         override fun onDone(utteranceId: String?) {
+            _wordIndex = 0
             _state.update { it.copy(isPlaying = false, wordRange = IntRange(0, 0), progress = 0f) }
         }
 
@@ -73,13 +82,29 @@ object SpeechService : ViewModel() {
             end: Int,
             frame: Int
         ) {
-            val progress = end / _textCount.toFloat()
-            _state.update { it.copy(wordRange = IntRange(start, end), progress = progress) }
+
+            if (_wordIndex < _words.size) {
+                val utterance = _words[_wordIndex]
+
+                val regex = utterance.toRegex()
+                val spoken = _words.take(_wordIndex).joinToString(" ").length
+                val matchResult = regex.find(input =  state.value.text, startIndex =  spoken)
+
+                _wordIndex++
+                matchResult?.let { match ->
+                    if (match.range.last > match.range.first) {
+                        val progress = match.range.last / _textCount.toFloat()
+                        val range = IntRange(match.range.first, match.range.last + 1)
+                        _state.update { it.copy(wordRange = range, progress = progress) }
+                    }
+
+                }
+            }
 
         }
 
         override fun onStop(utteranceId: String?, interrupted: Boolean) {
-            _state.update { it.copy(isPlaying = false, wordRange = IntRange(0, 0), progress = 0f) }
+            _state.update { it.copy(isPlaying = false) }
         }
 
         @Deprecated("Deprecated in Java")

@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.PlayCircle
+import androidx.compose.material.icons.rounded.Pause
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.RecordVoiceOver
 import androidx.compose.material.icons.rounded.Speed
-import androidx.compose.material.icons.rounded.StopCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -84,13 +84,13 @@ fun SpeechScreen(onCollapse: () -> Unit) {
                         IconButton(
                             modifier = Modifier.size(60.dp),
                             onClick = {
-                                if (state.isPlaying) SpeechService.stop() else SpeechService.play(
+                                if (state.isPlaying) SpeechService.pause() else SpeechService.play(
                                     context = context
                                 )
                             }
                         ) {
                             Icon(
-                                imageVector = if (state.isPlaying) Icons.Rounded.StopCircle else Icons.Rounded.PlayCircle,
+                                imageVector = if (state.isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                                 contentDescription = "Play/Pause",
                                 modifier = Modifier.size(60.dp),
                                 tint = MaterialTheme.colorScheme.primary
