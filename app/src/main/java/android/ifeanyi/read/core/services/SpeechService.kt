@@ -3,6 +3,7 @@ package android.ifeanyi.read.core.services
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.speech.tts.Voice
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ data class SpeechState(
     val text: String = "",
     val isPlaying: Boolean = false,
     val wordRange: IntRange = IntRange(0, 0),
-    val progress: Float = 0f
+    val progress: Float = 0f,
+    val voices: List<Voice> = emptyList()
 ) {
     var canPlay: Boolean = text.isNotEmpty()
 }
@@ -46,14 +48,19 @@ object SpeechService : ViewModel() {
         _textToSpeech?.stop()
     }
 
-    fun play(context: Context) = viewModelScope.launch {
+    fun play(context: Context, voice: Voice? = null, rate: Float? = null) = viewModelScope.launch {
         _textToSpeech = TextToSpeech(
             context
         ) { res ->
             if (res == TextToSpeech.SUCCESS) {
                 _textToSpeech?.let { speaker ->
+                    _state.update { it.copy(voices = speaker.voices.toList()) }
                     speaker.language = Locale.US
-                    speaker.setSpeechRate(1.2f)
+                    speaker.setSpeechRate(rate ?: 1.2f)
+                    if (voice != null) {
+                        val r = speaker.setVoice(voice)
+                        println("SET VOICE RESULT: $r")
+                    }
                     speaker.setOnUtteranceProgressListener(ProgressListener())
                     speaker.speak(
                         _state.value.text.take(4000).substring(_state.value.wordRange.first),
@@ -64,6 +71,16 @@ object SpeechService : ViewModel() {
                 }
             }
         }
+    }
+
+    fun changeVoice(context: Context, voice: Voice) {
+        _textToSpeech?.stop()
+        play(context, voice = voice)
+    }
+
+    fun changeRate(context: Context, rate: Float) {
+        _textToSpeech?.stop()
+        play(context, rate = rate)
     }
 
     class ProgressListener : UtteranceProgressListener() {

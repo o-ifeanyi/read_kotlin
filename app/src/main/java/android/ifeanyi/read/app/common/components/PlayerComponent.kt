@@ -120,8 +120,8 @@ fun PlayerComponent() {
                             }
                         }
                         LinearProgressIndicator(
+                            progress = { state.progress },
                             modifier = Modifier.fillMaxWidth(),
-                            progress = state.progress
                         )
                     }
                 }

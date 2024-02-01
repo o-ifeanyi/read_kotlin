@@ -39,9 +39,6 @@ fun BottomNavigationBarComponent(controller: NavHostController, currentDestinati
                         }
                     }
                 },
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = MaterialTheme.colorScheme.inversePrimary
-                )
             )
         }
     }
