@@ -1,4 +1,4 @@
-package android.ifeanyi.read.app.home
+package android.ifeanyi.read.app.presentation.views.home
 
 import android.annotation.SuppressLint
 import androidx.compose.material3.ExperimentalMaterial3Api

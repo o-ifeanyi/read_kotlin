@@ -4,7 +4,6 @@ enum class Routes {
     HomeScreen,
     HomeTwoScreen,
     LibraryScreen,
-    LibraryTwoScreen,
     SettingsScreen,
     SettingsTwoScreen
 }

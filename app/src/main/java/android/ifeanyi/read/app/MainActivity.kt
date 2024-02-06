@@ -1,7 +1,7 @@
 package android.ifeanyi.read.app
 
-import android.ifeanyi.read.app.common.components.BottomNavigationBarComponent
-import android.ifeanyi.read.app.common.components.PlayerComponent
+import android.ifeanyi.read.app.presentation.components.BottomNavigationBarComponent
+import android.ifeanyi.read.app.presentation.components.PlayerComponent
 import android.ifeanyi.read.core.route.Router
 import android.ifeanyi.read.core.services.SnackBarService
 import android.os.Bundle

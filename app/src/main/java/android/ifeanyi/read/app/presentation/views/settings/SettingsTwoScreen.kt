@@ -1,4 +1,4 @@
-package android.ifeanyi.read.app.settings
+package android.ifeanyi.read.app.presentation.views.settings
 
 import android.annotation.SuppressLint
 import android.ifeanyi.read.core.services.SnackBarService

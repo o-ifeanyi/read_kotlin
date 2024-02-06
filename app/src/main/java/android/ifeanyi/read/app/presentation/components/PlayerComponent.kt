@@ -1,7 +1,7 @@
-package android.ifeanyi.read.app.common.components
+package android.ifeanyi.read.app.presentation.components
 
 import android.annotation.SuppressLint
-import android.ifeanyi.read.app.speech.SpeechScreen
+import android.ifeanyi.read.app.presentation.views.speech.SpeechScreen
 import android.ifeanyi.read.core.services.SpeechService
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -70,9 +70,6 @@ fun PlayerComponent() {
                 ElevatedButton(
                     modifier = Modifier.padding(8.dp),
                     shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.elevatedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    ),
                     contentPadding = PaddingValues(8.dp),
                     onClick = {
                         expanded = !expanded

@@ -1,4 +1,4 @@
-package android.ifeanyi.read.app.common.components
+package android.ifeanyi.read.app.presentation.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring

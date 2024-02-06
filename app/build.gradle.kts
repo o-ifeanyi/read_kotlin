@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -53,28 +55,30 @@ android {
 }
 
 dependencies {
+    // Room DB
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
     // PDF to text
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
-    // View PDF
-    implementation("io.github.grizzi91:bouquet:1.1.2")
     // Image to text
     implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.0")
     // URL to text
     implementation("org.jsoup:jsoup:1.14.3")
     // Font
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.0")
-    // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     // Hilt
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     // Material icons
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
-    // Coil
-    implementation("io.coil-kt:coil-compose:2.2.2")
+    // Fix PendingIntent crash
+    implementation("androidx.work:work-runtime:2.9.0")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

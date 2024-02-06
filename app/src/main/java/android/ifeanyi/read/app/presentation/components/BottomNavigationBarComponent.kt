@@ -1,4 +1,4 @@
-package android.ifeanyi.read.app.common.components
+package android.ifeanyi.read.app.presentation.components
 
 import android.ifeanyi.read.core.route.bottomNavItems
 import android.ifeanyi.read.core.route.parentRoute

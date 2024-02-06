@@ -1,6 +1,10 @@
 package android.ifeanyi.read.core.services
 
 import android.content.Context
+import android.ifeanyi.read.app.data.models.LibraryModel
+import android.ifeanyi.read.app.data.models.LibraryType
+import android.ifeanyi.read.core.util.TextParser
+import android.net.Uri
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
@@ -14,6 +18,7 @@ import java.util.Locale
 
 data class SpeechState(
     val text: String = "",
+    val model: LibraryModel? = null,
     val isPlaying: Boolean = false,
     val wordRange: IntRange = IntRange(0, 0),
     val progress: Float = 0f,
@@ -32,10 +37,42 @@ object SpeechService : ViewModel() {
     private var _wordIndex = 0
     private var _textCount: Int = 0
 
-    fun updateText(text: String) = viewModelScope.launch {
-        _textCount = text.length
-        _words = text.split(" ")
-        _state.update { it.copy(text = text) }
+    fun updateModel(context: Context, libraryModel: LibraryModel) = viewModelScope.launch {
+        _state.update { it.copy(model = libraryModel) }
+        when (libraryModel.type) {
+            LibraryType.Pdf -> {
+                val uri = Uri.parse(libraryModel.path)
+                TextParser.parsePdf(context, uri) { result ->
+                    stop()
+                    _textCount = result.length
+                    _words = result.split(" ")
+                    _state.update { it.copy(text = result) }
+                    play(context)
+                }
+            }
+
+            LibraryType.Image -> {
+                val uri = Uri.parse(libraryModel.path)
+                TextParser.parseImage(context, uri) { result ->
+                    stop()
+                    _textCount = result.length
+                    _words = result.split(" ")
+                    _state.update { it.copy(text = result) }
+                    play(context)
+                }
+            }
+
+            LibraryType.Url -> {
+                println(libraryModel.name)
+                TextParser.parseUrl(libraryModel.path) { result ->
+                    stop()
+                    _textCount = result.length
+                    _words = result.split(" ")
+                    _state.update { it.copy(text = result) }
+                    play(context)
+                }
+            }
+        }
     }
 
     fun pause() {
@@ -44,7 +81,7 @@ object SpeechService : ViewModel() {
 
     fun stop() {
         _wordIndex = 0
-        _state.update { it.copy(wordRange = IntRange(0, 0), progress = 0f)}
+        _state.update { it.copy(wordRange = IntRange(0, 0), progress = 0f) }
         _textToSpeech?.stop()
     }
 
@@ -105,7 +142,7 @@ object SpeechService : ViewModel() {
 
                 val regex = utterance.toRegex()
                 val spoken = _words.take(_wordIndex).joinToString(" ").length
-                val matchResult = regex.find(input =  state.value.text, startIndex =  spoken)
+                val matchResult = regex.find(input = state.value.text, startIndex = spoken)
 
                 _wordIndex++
                 matchResult?.let { match ->
