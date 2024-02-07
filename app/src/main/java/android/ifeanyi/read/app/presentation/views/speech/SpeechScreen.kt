@@ -1,7 +1,7 @@
 package android.ifeanyi.read.app.presentation.views.speech
 
 import android.ifeanyi.read.app.presentation.components.CustomSlider
-import android.ifeanyi.read.app.presentation.components.GridButtonComponent
+import android.ifeanyi.read.app.presentation.components.GridTileComponent
 import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.util.flagEmoji
 import androidx.activity.compose.BackHandler
@@ -41,9 +41,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
@@ -52,7 +49,6 @@ import kotlinx.coroutines.launch
 fun SpeechScreen(onCollapse: () -> Unit) {
     val context = LocalContext.current
     val state = SpeechService.state.collectAsState().value
-    val displayedText = remember { mutableStateOf(buildAnnotatedString { }) }
 
     val coroutineScope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState()
@@ -147,23 +143,23 @@ fun SpeechScreen(onCollapse: () -> Unit) {
                     contentPadding = PaddingValues(15.dp)
                 ) {
                     items(state.voices) { voice ->
-                        GridButtonComponent(
+                        GridTileComponent(
                             asset = {
                                 if (voice.locale.flagEmoji != null) Text(
                                     text = voice.locale.flagEmoji!!,
                                     style = MaterialTheme.typography.titleMedium
                                 ) else null
                             },
-                            subtitle = voice.locale.displayName
-                        ) {
-                            println("FEATURES: ${voice.name}")
-                            coroutineScope.launch {
-                                SpeechService.changeVoice(context, voice)
-                                modalSheetState.hide()
-                            }.invokeOnCompletion {
-                                showVoicesSheet.value = false
+                            subtitle = voice.locale.displayName,
+                            onClick = {
+                                coroutineScope.launch {
+                                    SpeechService.changeVoice(context, voice)
+                                    modalSheetState.hide()
+                                }.invokeOnCompletion {
+                                    showVoicesSheet.value = false
+                                }
                             }
-                        }
+                        )
                     }
                 }
             }
@@ -203,29 +199,7 @@ fun SpeechScreen(onCollapse: () -> Unit) {
         ) {
             item {
                 if (state.canPlay) {
-                    val wordStyle = MaterialTheme.typography.bodyMedium.toSpanStyle().copy(
-                        fontWeight = FontWeight.Bold,
-                        background = MaterialTheme.colorScheme.tertiaryContainer,
-                    )
-
-                    val sentenceStyle = MaterialTheme.typography.bodyMedium.toSpanStyle()
-
-                    val spokenStyle = MaterialTheme.typography.bodyMedium.toSpanStyle().copy(
-                        color = MaterialTheme.colorScheme.outline
-                    )
-
-                    val wordRange = state.wordRange
-
-                    displayedText.value = buildAnnotatedString {
-                        withStyle(sentenceStyle) {
-                            append(state.text)
-                        }
-
-                        addStyle(spokenStyle, start = 0, end = wordRange.first)
-                        addStyle(wordStyle, start = wordRange.first, end = wordRange.last)
-                    }
-
-                    Text(text = displayedText.value)
+                    HighlightedText(text = state.text, range = state.wordRange)
                 }
             }
         }

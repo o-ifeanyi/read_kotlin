@@ -1,7 +1,9 @@
 package android.ifeanyi.read.app.presentation.viewmodel
 
 import android.ifeanyi.read.app.data.LibraryRepository
-import android.ifeanyi.read.app.data.models.LibraryModel
+import android.ifeanyi.read.app.data.models.FileModel
+import android.ifeanyi.read.app.data.models.FolderModel
+import android.ifeanyi.read.app.presentation.views.library.SortType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,31 +12,107 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 data class LibraryState(
-    val items: List<LibraryModel> = emptyList()
+    val files: List<FileModel> = emptyList(),
+    val searchedFiles: List<FileModel> = emptyList(),
+    val folders: List<FolderModel> = emptyList(),
+    val searchedFolders: List<FolderModel> = emptyList(),
+    val folderFiles: List<FileModel> = emptyList(),
 )
+
 @HiltViewModel
-class LibraryViewModel @Inject constructor(private val libraryRepository: LibraryRepository): ViewModel() {
+class LibraryViewModel @Inject constructor(private val libraryRepository: LibraryRepository) :
+    ViewModel() {
     private val _state = MutableStateFlow(LibraryState())
     val state = _state.asStateFlow()
 
     init {
-        getAllItems()
+        getAllFiles()
+        getAllFolders()
     }
 
-    private fun getAllItems() = viewModelScope.launch {
-        libraryRepository.getAllItems().distinctUntilChanged().collect { items ->
-            _state.update { it.copy(items = items) }
+    private fun getAllFiles() = viewModelScope.launch {
+        libraryRepository.getAllFiles().distinctUntilChanged().collect { items ->
+            _state.update { it.copy(files = items) }
         }
     }
 
-    fun insertItem(libraryModel: LibraryModel) = viewModelScope.launch {
-        libraryRepository.insertItem(libraryModel)
+    fun insertItem(file: FileModel) = viewModelScope.launch {
+        libraryRepository.insertItem(file)
     }
 
-    fun deleteItem(libraryModel: LibraryModel) = viewModelScope.launch {
-        libraryRepository.deleteItem(libraryModel)
+    fun updateItem(file: FileModel) = viewModelScope.launch {
+        libraryRepository.updateItem(file)
+    }
+
+    fun deleteItem(file: FileModel) = viewModelScope.launch {
+        libraryRepository.deleteItem(file)
+    }
+
+    private fun getAllFolders() = viewModelScope.launch {
+        libraryRepository.getAllFolders().distinctUntilChanged().collect { items ->
+            _state.update { it.copy(folders = items) }
+        }
+    }
+
+    fun insertItem(folder: FolderModel) = viewModelScope.launch {
+        libraryRepository.insertItem(folder)
+    }
+
+    fun updateItem(folder: FolderModel) = viewModelScope.launch {
+        libraryRepository.updateItem(folder)
+    }
+
+    fun deleteItem(folder: FolderModel) = viewModelScope.launch {
+        libraryRepository.deleteItem(folder)
+    }
+
+    fun moveToFolder(id: UUID, files: List<FileModel>) = viewModelScope.launch {
+        for (file in files) {
+            libraryRepository.updateItem(file.copy(folder = id))
+        }
+    }
+
+    fun getFolderFiles(id: UUID) = viewModelScope.launch {
+        libraryRepository.getFolderFiles(id).distinctUntilChanged().collect { items ->
+            _state.update { it.copy(folderFiles = items) }
+        }
+    }
+
+    fun search(query: String) = viewModelScope.launch {
+        val value = _state.value
+        _state.update {
+            it.copy(
+                searchedFiles = value.files.filter { file ->
+                    file.name.lowercase().contains(query.lowercase())
+                },
+                searchedFolders = value.folders.filter { folder ->
+                    folder.name.lowercase().contains(query.lowercase())
+                }
+            )
+        }
+    }
+
+    fun sort(type: SortType) = viewModelScope.launch {
+        val value = _state.value
+        _state.update {
+            it.copy(
+                files = value.files.sortedBy { file ->
+                    when (type) {
+                        SortType.Date -> file.date
+                        SortType.Name -> file.name
+                    }.toString()
+                },
+                folders = value.folders.sortedBy { folder ->
+                    when (type) {
+                        SortType.Date -> folder.date
+                        SortType.Name -> folder.name
+                    }.toString()
+                },
+            )
+        }
     }
 }

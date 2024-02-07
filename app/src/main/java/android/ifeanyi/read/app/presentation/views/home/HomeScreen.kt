@@ -1,20 +1,16 @@
 package android.ifeanyi.read.app.presentation.views.home
 
 import android.annotation.SuppressLint
-import android.ifeanyi.read.app.data.models.LibraryModel
+import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.LibraryType
-import android.ifeanyi.read.app.presentation.components.TextFieldComponent
-import android.ifeanyi.read.app.presentation.components.TileButtonComponent
+import android.ifeanyi.read.app.presentation.components.ListTileComponent
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
 import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.util.getName
-import android.ifeanyi.read.core.util.trimUrl
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
@@ -33,17 +29,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(libraryViewModel: LibraryViewModel) {
     val context = LocalContext.current
+
+
+
+    val showUrlSheet = remember { mutableStateOf(false) }
 
     fun handleUriToModel(uri: Uri, type: LibraryType) {
         if (uri.path == null) return
@@ -52,12 +50,10 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
         input.copyTo(outputFile.outputStream())
         input.close()
         val newUri = outputFile.toUri()
-        val model = LibraryModel(
+        val model = FileModel(
             name = outputFile.name,
             type = type,
             path = newUri.toString(),
-            progress = 0,
-            parent = ""
         )
         SpeechService.updateModel(context, model)
         libraryViewModel.insertItem(model)
@@ -76,20 +72,14 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
             }
         }
 
-    val url = remember { mutableStateOf("") }
-    val showTextField = remember { mutableStateOf(false) }
-    val focusManager = LocalFocusManager.current
-
-    fun reset() {
-        showTextField.value = false
-        focusManager.clearFocus()
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = "Home") })
         }
     ) { padding ->
+        if (showUrlSheet.value) {
+            EnterUrlSheet(showUrlSheet, libraryViewModel)
+        }
         LazyColumn(
             contentPadding = PaddingValues(
                 top = padding.calculateTopPadding(),
@@ -99,71 +89,46 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             item {
-                TileButtonComponent(
+                ListTileComponent(
                     asset = {
                         Icon(imageVector = Icons.AutoMirrored.Rounded.InsertDriveFile, contentDescription = "",modifier = Modifier
                             .size(50.dp))
                     },
                     title = "Pick document",
-                    subtitle = "SizeTransform defines how the"
-                ) {
-                    reset()
-                    docLauncher.launch(arrayOf("application/pdf"))
-                }
+                    subtitle = "SizeTransform defines how the",
+                    onClick = { docLauncher.launch(arrayOf("application/pdf")) }
+                )
             }
 
             item {
-                TileButtonComponent(
+                ListTileComponent(
                     asset = {
                         Icon(imageVector = Icons.Rounded.Image, contentDescription = "",modifier = Modifier
                             .size(50.dp))
                     },
                     title = "Pick image",
-                    subtitle = "SizeTransform defines how the"
-                ) {
-                    reset()
-                    imageLauncher.launch(
-                        PickVisualMediaRequest(
-                            mediaType = ActivityResultContracts.PickVisualMedia.ImageAndVideo
+                    subtitle = "SizeTransform defines how the",
+                    onClick = {
+                        imageLauncher.launch(
+                            PickVisualMediaRequest(
+                                mediaType = ActivityResultContracts.PickVisualMedia.ImageAndVideo
+                            )
                         )
-                    )
-                }
+                    }
+                )
             }
 
             item {
-                TileButtonComponent(
+                ListTileComponent(
                     asset = {
                         Icon(imageVector = Icons.Rounded.Link, contentDescription = "",modifier = Modifier
                             .size(50.dp))
                     },
                     title = "Paste web link",
-                    subtitle = "SizeTransform defines how the"
-                ) {
-                    reset()
-                    showTextField.value = true
-                }
+                    subtitle = "SizeTransform defines how the",
+                    onClick = { showUrlSheet.value = true }
+                )
             }
-
-            item {
-                if (showTextField.value) {
-                    TextFieldComponent(
-                        value = url,
-                        label = { Text("Web link") },
-                        onImeAction = {
-                            val model = LibraryModel(
-                                name = url.value.trimUrl,
-                                type = LibraryType.Url,
-                                path = url.value,
-                                progress = 0,
-                                parent = ""
-                            )
-                            SpeechService.updateModel(context, model)
-                            libraryViewModel.insertItem(model)
-                        }
-                    )
-                }
-            }
-
         }
     }
 }

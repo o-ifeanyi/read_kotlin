@@ -33,9 +33,13 @@ fun Uri.getName(context: Context): String {
 
 val String.trimUrl: String
 get(){
-    val host = URI(this).host
-    val domain = if (host.startsWith("www.")) host.substring(4) else host
-    return domain.split(".").first()
+    return try {
+        val host = URI(this).host
+        val domain = if (host.startsWith("www.")) host.substring(4) else host
+        return domain.split(".").first()
+    } catch (ex: Exception) {
+        ""
+    }
 }
 
 fun Date.dwdm(locale: Locale): String {

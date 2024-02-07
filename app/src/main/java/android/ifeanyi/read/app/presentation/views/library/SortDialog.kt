@@ -1,5 +1,6 @@
 package android.ifeanyi.read.app.presentation.views.library
 
+import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,11 +19,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+enum class SortType { Date, Name }
+
 @Composable
-fun LibrarySortDialog(
+fun SortDialog(
     padding: PaddingValues,
     showSort: MutableState<Boolean>,
-    showMore: MutableState<Boolean>
+    showMore: MutableState<Boolean>,
+    libraryViewModel: LibraryViewModel,
 ) {
     Box(
         modifier = Modifier
@@ -63,18 +67,14 @@ fun LibrarySortDialog(
                 text = { Text(text = "Name") },
                 onClick = {
                     showSort.value = false
+                    libraryViewModel.sort(SortType.Name)
                 },
             )
             DropdownMenuItem(
                 text = { Text(text = "Date") },
                 onClick = {
                     showSort.value = false
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(text = "Progress") },
-                onClick = {
-                    showSort.value = false
+                    libraryViewModel.sort(SortType.Date)
                 },
             )
         }

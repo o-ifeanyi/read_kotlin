@@ -1,7 +1,7 @@
 package android.ifeanyi.read.core.services
 
 import android.content.Context
-import android.ifeanyi.read.app.data.models.LibraryModel
+import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.LibraryType
 import android.ifeanyi.read.core.util.TextParser
 import android.net.Uri
@@ -18,7 +18,7 @@ import java.util.Locale
 
 data class SpeechState(
     val text: String = "",
-    val model: LibraryModel? = null,
+    val model: FileModel? = null,
     val isPlaying: Boolean = false,
     val wordRange: IntRange = IntRange(0, 0),
     val progress: Float = 0f,
@@ -37,7 +37,7 @@ object SpeechService : ViewModel() {
     private var _wordIndex = 0
     private var _textCount: Int = 0
 
-    fun updateModel(context: Context, libraryModel: LibraryModel) = viewModelScope.launch {
+    fun updateModel(context: Context, libraryModel: FileModel) = viewModelScope.launch {
         _state.update { it.copy(model = libraryModel) }
         when (libraryModel.type) {
             LibraryType.Pdf -> {

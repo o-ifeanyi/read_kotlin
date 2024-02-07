@@ -14,8 +14,8 @@ import java.util.UUID
 
 enum class LibraryType { Pdf, Image, Url }
 
-@Entity(tableName = "library_table")
-data class LibraryModel(
+@Entity(tableName = "file_table")
+data class FileModel(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
     @ColumnInfo
@@ -27,9 +27,9 @@ data class LibraryModel(
     @ColumnInfo
     val path: String,
     @ColumnInfo
-    val progress: Int,
+    val progress: Int = 0,
     @ColumnInfo
-    val parent: String,
+    val folder: UUID? = null,
 ) {
     fun icon(): ImageVector {
          return when (type) {

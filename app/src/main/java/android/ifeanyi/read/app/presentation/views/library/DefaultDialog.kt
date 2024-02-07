@@ -23,8 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LibraryMoreDialog(
+fun DefaultDialog(
     padding: PaddingValues,
+    createFolder: MutableState<Boolean>,
     showMore: MutableState<Boolean>,
     showSort: MutableState<Boolean>,
     isSelecting: MutableState<Boolean>,
@@ -47,6 +48,7 @@ fun LibraryMoreDialog(
             DropdownMenuItem(
                 text = { Text(text = "New Folder") },
                 onClick = {
+                    createFolder.value = true
                     showMore.value = false
                 },
                 trailingIcon = {

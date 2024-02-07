@@ -2,7 +2,8 @@ package android.ifeanyi.read.core.di
 
 import android.content.Context
 import android.ifeanyi.read.app.data.LibraryRepository
-import android.ifeanyi.read.app.data.source.LibraryDao
+import android.ifeanyi.read.app.data.source.FileDao
+import android.ifeanyi.read.app.data.source.FolderDao
 import android.ifeanyi.read.core.services.DatabaseService
 import androidx.room.Room
 import dagger.Module
@@ -17,17 +18,23 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideLibraryDao(databaseService: DatabaseService) : LibraryDao = databaseService.library()
+    fun provideFileDao(databaseService: DatabaseService): FileDao = databaseService.file()
 
     @Singleton
     @Provides
-    fun provideAppDatabase(@ApplicationContext context: Context): DatabaseService = Room.databaseBuilder(
-        context,
-        DatabaseService::class.java,
-        name = "read_db"
-    ).fallbackToDestructiveMigration().build()
+    fun provideFolderDao(databaseService: DatabaseService): FolderDao = databaseService.folder()
 
     @Singleton
     @Provides
-    fun provideLibraryRepository(libraryDao: LibraryDao) : LibraryRepository = LibraryRepository(libraryDao)
+    fun provideAppDatabase(@ApplicationContext context: Context): DatabaseService =
+        Room.databaseBuilder(
+            context,
+            DatabaseService::class.java,
+            name = "read_db"
+        ).fallbackToDestructiveMigration().build()
+
+    @Singleton
+    @Provides
+    fun provideLibraryRepository(fileDao: FileDao, folderDao: FolderDao): LibraryRepository =
+        LibraryRepository(fileDao, folderDao)
 }
