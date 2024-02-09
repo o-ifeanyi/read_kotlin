@@ -1,16 +1,11 @@
 package android.ifeanyi.read.app.presentation.views.library
 
+import android.ifeanyi.read.core.theme.AppIcons
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Sort
-import androidx.compose.material.icons.automirrored.outlined.ViewList
-import androidx.compose.material.icons.outlined.Checklist
-import androidx.compose.material.icons.outlined.CreateNewFolder
-import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -52,7 +47,7 @@ fun DefaultDialog(
                     showMore.value = false
                 },
                 trailingIcon = {
-                    Icon(imageVector = Icons.Outlined.CreateNewFolder, contentDescription = "")
+                    Icon(imageVector = AppIcons.newFolder, contentDescription = "")
                 }
             )
             DropdownMenuItem(
@@ -63,7 +58,7 @@ fun DefaultDialog(
                 },
                 trailingIcon = {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.Sort,
+                        imageVector = AppIcons.sort,
                         contentDescription = ""
                     )
                 }
@@ -75,7 +70,7 @@ fun DefaultDialog(
                     isSelecting.value = true
                 },
                 trailingIcon = {
-                    Icon(imageVector = Icons.Outlined.Checklist, contentDescription = "")
+                    Icon(imageVector = AppIcons.checklist, contentDescription = "")
                 }
             )
             HorizontalDivider()
@@ -87,7 +82,7 @@ fun DefaultDialog(
                 },
                 trailingIcon = {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ViewList,
+                        imageVector = AppIcons.listView,
                         contentDescription = ""
                     )
                 }
@@ -99,7 +94,7 @@ fun DefaultDialog(
                     listStyle.value = ListStyle.Grid
                 },
                 trailingIcon = {
-                    Icon(imageVector = Icons.Outlined.GridView, contentDescription = "")
+                    Icon(imageVector = AppIcons.gridView, contentDescription = "")
                 }
             )
         }

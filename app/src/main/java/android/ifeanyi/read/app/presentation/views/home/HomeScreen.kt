@@ -6,6 +6,7 @@ import android.ifeanyi.read.app.data.models.LibraryType
 import android.ifeanyi.read.app.presentation.components.ListTileComponent
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
 import android.ifeanyi.read.core.services.SpeechService
+import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.getName
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -15,10 +16,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.InsertDriveFile
-import androidx.compose.material.icons.rounded.Image
-import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -91,7 +88,7 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
             item {
                 ListTileComponent(
                     asset = {
-                        Icon(imageVector = Icons.AutoMirrored.Rounded.InsertDriveFile, contentDescription = "",modifier = Modifier
+                        Icon(imageVector = AppIcons.doc, contentDescription = "",modifier = Modifier
                             .size(50.dp))
                     },
                     title = "Pick document",
@@ -103,7 +100,7 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
             item {
                 ListTileComponent(
                     asset = {
-                        Icon(imageVector = Icons.Rounded.Image, contentDescription = "",modifier = Modifier
+                        Icon(imageVector = AppIcons.image, contentDescription = "",modifier = Modifier
                             .size(50.dp))
                     },
                     title = "Pick image",
@@ -121,7 +118,7 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
             item {
                 ListTileComponent(
                     asset = {
-                        Icon(imageVector = Icons.Rounded.Link, contentDescription = "",modifier = Modifier
+                        Icon(imageVector = AppIcons.link, contentDescription = "",modifier = Modifier
                             .size(50.dp))
                     },
                     title = "Paste web link",

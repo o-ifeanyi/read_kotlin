@@ -5,6 +5,7 @@ import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.FolderModel
 import android.ifeanyi.read.app.presentation.components.GridTileComponent
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
+import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.dwdm
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,8 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -81,7 +80,7 @@ fun MoveFilesSheet(
                         GridTileComponent(
                             asset = {
                                 Icon(
-                                    imageVector = Icons.Rounded.Folder,
+                                    imageVector = AppIcons.folder,
                                     contentDescription = "Icon",
                                     modifier = Modifier.size(30.dp),
                                 )

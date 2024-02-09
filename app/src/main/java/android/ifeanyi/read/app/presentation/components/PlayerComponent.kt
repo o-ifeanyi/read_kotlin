@@ -3,6 +3,7 @@ package android.ifeanyi.read.app.presentation.components
 import android.annotation.SuppressLint
 import android.ifeanyi.read.app.presentation.views.speech.SpeechScreen
 import android.ifeanyi.read.core.services.SpeechService
+import android.ifeanyi.read.core.theme.AppIcons
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -20,11 +21,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Pause
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Stop
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -96,7 +92,7 @@ fun PlayerComponent() {
                             ) {
                                 Icon(
                                     modifier = Modifier.size(40.dp),
-                                    imageVector = Icons.Rounded.Stop,
+                                    imageVector = AppIcons.stop,
                                     contentDescription = "Stop Button",
                                     tint = MaterialTheme.colorScheme.primary
                                 )
@@ -110,7 +106,7 @@ fun PlayerComponent() {
                             ) {
                                 Icon(
                                     modifier = Modifier.size(40.dp),
-                                    imageVector = if (state.isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                                    imageVector = if (state.isPlaying) AppIcons.pause else AppIcons.play,
                                     contentDescription = "Play/Pause Button",
                                     tint = MaterialTheme.colorScheme.primary
                                 )

@@ -3,15 +3,12 @@ package android.ifeanyi.read.app.presentation.views.library
 import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.FolderModel
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
+import android.ifeanyi.read.core.theme.AppIcons
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.DriveFileRenameOutline
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -71,7 +68,7 @@ fun SelectingDialog(
                 },
                 trailingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.Delete,
+                        imageVector = AppIcons.delete,
                         contentDescription = ""
                     )
                 },
@@ -86,7 +83,7 @@ fun SelectingDialog(
                     },
                     trailingIcon = {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.DriveFileMove,
+                            imageVector = AppIcons.folderMove,
                             contentDescription = ""
                         )
                     },
@@ -102,7 +99,7 @@ fun SelectingDialog(
                     },
                     trailingIcon = {
                         Icon(
-                            imageVector = Icons.Outlined.DriveFileRenameOutline,
+                            imageVector = AppIcons.rename,
                             contentDescription = ""
                         )
                     },

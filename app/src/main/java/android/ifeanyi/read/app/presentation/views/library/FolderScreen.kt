@@ -5,6 +5,7 @@ import android.ifeanyi.read.app.data.models.FolderModel
 import android.ifeanyi.read.app.presentation.components.GridTileComponent
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
 import android.ifeanyi.read.core.services.SpeechService
+import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.dwdm
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -17,8 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CheckBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -165,7 +164,7 @@ fun FolderScreen(id: UUID, name: String, libraryViewModel: LibraryViewModel) {
                         )
                         if (isSelecting.value && selectedFiles.contains(file)) {
                             Icon(
-                                imageVector = Icons.Rounded.CheckBox,
+                                imageVector = AppIcons.checkbox,
                                 contentDescription = "",
                                 modifier = Modifier.align(
                                     Alignment.TopEnd

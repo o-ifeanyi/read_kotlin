@@ -1,9 +1,6 @@
 package android.ifeanyi.read.app.data.models
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.InsertDriveFile
-import androidx.compose.material.icons.rounded.Image
-import androidx.compose.material.icons.rounded.Link
+import android.ifeanyi.read.core.theme.AppIcons
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -33,9 +30,9 @@ data class FileModel(
 ) {
     fun icon(): ImageVector {
          return when (type) {
-            LibraryType.Pdf -> Icons.AutoMirrored.Rounded.InsertDriveFile
-            LibraryType.Image -> Icons.Rounded.Image
-            LibraryType.Url -> Icons.Rounded.Link
+            LibraryType.Pdf -> AppIcons.doc
+            LibraryType.Image -> AppIcons.image
+            LibraryType.Url -> AppIcons.link
         }
     }
 }

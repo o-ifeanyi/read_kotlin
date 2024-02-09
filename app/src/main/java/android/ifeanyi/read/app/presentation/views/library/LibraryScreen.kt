@@ -8,6 +8,7 @@ import android.ifeanyi.read.app.presentation.components.ListTileComponent
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
 import android.ifeanyi.read.core.route.Routes
 import android.ifeanyi.read.core.services.SpeechService
+import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.dwdm
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -26,8 +27,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CheckBox
-import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -207,7 +206,7 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                                             GridTileComponent(
                                                 asset = {
                                                     Icon(
-                                                        imageVector = Icons.Rounded.Folder,
+                                                        imageVector = AppIcons.folder,
                                                         contentDescription = "Icon",
                                                         modifier = Modifier.size(30.dp),
                                                     )
@@ -226,7 +225,7 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                                             )
                                             if (isSelecting.value && selectedFolders.contains(folder)) {
                                                 Icon(
-                                                    imageVector = Icons.Rounded.CheckBox,
+                                                    imageVector = AppIcons.checkbox,
                                                     contentDescription = "",
                                                     modifier = Modifier.align(
                                                         Alignment.TopEnd
@@ -251,7 +250,7 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                                             .align(Alignment.CenterStart),
                                         asset = {
                                             Icon(
-                                                imageVector = Icons.Rounded.Folder,
+                                                imageVector = AppIcons.folder,
                                                 contentDescription = "Icon",
                                                 modifier = Modifier.size(40.dp),
                                             )
@@ -267,7 +266,7 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                                     )
                                     if (isSelecting.value && selectedFolders.contains(folder)) {
                                         Icon(
-                                            imageVector = Icons.Rounded.CheckBox,
+                                            imageVector = AppIcons.checkbox,
                                             contentDescription = "",
                                             modifier = Modifier.align(
                                                 Alignment.TopEnd
@@ -327,7 +326,7 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                                             )
                                             if (isSelecting.value && selectedFiles.contains(file)) {
                                                 Icon(
-                                                    imageVector = Icons.Rounded.CheckBox,
+                                                    imageVector = AppIcons.checkbox,
                                                     contentDescription = "",
                                                     modifier = Modifier.align(
                                                         Alignment.TopEnd
@@ -372,7 +371,7 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                                     )
                                     if (isSelecting.value && selectedFiles.contains(file)) {
                                         Icon(
-                                            imageVector = Icons.Rounded.CheckBox,
+                                            imageVector = AppIcons.checkbox,
                                             contentDescription = "",
                                             modifier = Modifier.align(
                                                 Alignment.TopEnd

@@ -1,14 +1,12 @@
 package android.ifeanyi.read.app.presentation.views.library
 
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
+import android.ifeanyi.read.core.theme.AppIcons
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Sort
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -52,13 +50,13 @@ fun SortDialog(
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+                        imageVector = AppIcons.keyLeft,
                         contentDescription = ""
                     )
                 },
                 trailingIcon = {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.Sort,
+                        imageVector = AppIcons.sort,
                         contentDescription = ""
                     )
                 }

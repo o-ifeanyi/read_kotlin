@@ -1,13 +1,12 @@
 package android.ifeanyi.read.app.presentation.components
 
+import android.ifeanyi.read.core.theme.AppIcons
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.FlagCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -45,7 +44,7 @@ fun GridTileComponent(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             if (asset?.invoke() == null) Icon(
-                imageVector = Icons.Rounded.FlagCircle,
+                imageVector = AppIcons.flag,
                 contentDescription = "Flag",
                 modifier = Modifier.size(30.dp)
             )

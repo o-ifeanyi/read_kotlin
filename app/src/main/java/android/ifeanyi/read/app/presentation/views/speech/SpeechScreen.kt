@@ -3,6 +3,7 @@ package android.ifeanyi.read.app.presentation.views.speech
 import android.ifeanyi.read.app.presentation.components.CustomSlider
 import android.ifeanyi.read.app.presentation.components.GridTileComponent
 import android.ifeanyi.read.core.services.SpeechService
+import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.flagEmoji
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -17,11 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Pause
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.RecordVoiceOver
-import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -92,7 +88,7 @@ fun SpeechScreen(onCollapse: () -> Unit) {
                         )
                         {
                             Icon(
-                                imageVector = Icons.Rounded.RecordVoiceOver,
+                                imageVector = AppIcons.speaker,
                                 contentDescription = "Speakers",
                                 modifier = Modifier.size(30.dp),
                                 tint = MaterialTheme.colorScheme.primary
@@ -107,7 +103,7 @@ fun SpeechScreen(onCollapse: () -> Unit) {
                             }
                         ) {
                             Icon(
-                                imageVector = if (state.isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                                imageVector = if (state.isPlaying) AppIcons.pause else AppIcons.play,
                                 contentDescription = "Play/Pause",
                                 modifier = Modifier.size(60.dp),
                                 tint = MaterialTheme.colorScheme.primary
@@ -120,7 +116,7 @@ fun SpeechScreen(onCollapse: () -> Unit) {
                             })
                         {
                             Icon(
-                                imageVector = Icons.Rounded.Speed,
+                                imageVector = AppIcons.speechRate,
                                 contentDescription = "Speed",
                                 modifier = Modifier.size(30.dp),
                                 tint = MaterialTheme.colorScheme.primary
