@@ -30,7 +30,7 @@ fun SelectingDialog(
     showSelectOptions: MutableState<Boolean>,
     selectedFiles: SnapshotStateList<FileModel>,
     selectedFolders: SnapshotStateList<FolderModel>,
-    libraryViewModel: LibraryViewModel,
+    libraryVM: LibraryViewModel,
 ) {
     val allCount = remember(selectedFiles.size, selectedFolders.size) {
         selectedFiles.size + selectedFolders.size
@@ -41,7 +41,7 @@ fun SelectingDialog(
             .fillMaxWidth()
             .padding(
                 top = padding.calculateTopPadding(),
-                start = 15.dp, end = 15.dp,
+                start = 20.dp, end = 20.dp,
             )
             .wrapContentSize(Alignment.TopEnd)
     ) {
@@ -56,10 +56,10 @@ fun SelectingDialog(
                 text = { Text(text = "Delete") },
                 onClick = {
                     for (file in selectedFiles) {
-                        libraryViewModel.deleteItem(file)
+                        libraryVM.deleteItem(file)
                     }
                     for (folder in selectedFolders) {
-                        libraryViewModel.deleteItem(folder)
+                        libraryVM.deleteItem(folder)
                     }
                     selectedFiles.clear()
                     selectedFolders.clear()

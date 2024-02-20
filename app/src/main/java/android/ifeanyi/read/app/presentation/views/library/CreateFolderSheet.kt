@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 fun CreateFolderSheet(
     createFolder: MutableState<Boolean>,
-    libraryViewModel: LibraryViewModel
+    libraryVM: LibraryViewModel
 ) {
     val name = remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
@@ -39,7 +39,7 @@ fun CreateFolderSheet(
         val folder = FolderModel(name = name.value)
 
         coroutineScope.launch {
-            libraryViewModel.insertItem(folder)
+            libraryVM.insertItem(folder)
             modalSheetState.hide()
         }.invokeOnCompletion {
             createFolder.value = false
@@ -53,7 +53,7 @@ fun CreateFolderSheet(
         Column(
             modifier = Modifier
                 .fillMaxHeight(0.5f)
-                .padding(15.dp),
+                .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(text = "Create Folder", style = MaterialTheme.typography.titleLarge)

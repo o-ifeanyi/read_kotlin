@@ -2,9 +2,12 @@ package android.ifeanyi.read.core.di
 
 import android.content.Context
 import android.ifeanyi.read.app.data.LibraryRepository
+import android.ifeanyi.read.app.data.SettingsRepository
 import android.ifeanyi.read.app.data.source.FileDao
 import android.ifeanyi.read.app.data.source.FolderDao
+import android.ifeanyi.read.app.data.source.WhatsNewDao
 import android.ifeanyi.read.core.services.DatabaseService
+import android.ifeanyi.read.core.services.PreferenceService
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
@@ -16,6 +19,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object AppModule {
+    @Provides
+    @Singleton
+    fun providePreferenceService(@ApplicationContext context: Context): PreferenceService {
+        return PreferenceService(context = context)
+    }
+
     @Singleton
     @Provides
     fun provideFileDao(databaseService: DatabaseService): FileDao = databaseService.file()
@@ -23,6 +32,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideFolderDao(databaseService: DatabaseService): FolderDao = databaseService.folder()
+
+    @Singleton
+    @Provides
+    fun provideWhatsNewDao(databaseService: DatabaseService): WhatsNewDao = databaseService.whatsNew()
 
     @Singleton
     @Provides
@@ -37,4 +50,9 @@ object AppModule {
     @Provides
     fun provideLibraryRepository(fileDao: FileDao, folderDao: FolderDao): LibraryRepository =
         LibraryRepository(fileDao, folderDao)
+
+    @Singleton
+    @Provides
+    fun provideSettingsRepository(whatsNewDao: WhatsNewDao): SettingsRepository =
+        SettingsRepository(whatsNewDao)
 }

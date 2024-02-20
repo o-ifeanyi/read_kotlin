@@ -24,14 +24,14 @@ fun SortDialog(
     padding: PaddingValues,
     showSort: MutableState<Boolean>,
     showMore: MutableState<Boolean>,
-    libraryViewModel: LibraryViewModel,
+    libraryVM: LibraryViewModel,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
                 top = padding.calculateTopPadding(),
-                start = 15.dp, end = 15.dp,
+                start = 20.dp, end = 20.dp,
             )
             .wrapContentSize(Alignment.TopEnd)
     ) {
@@ -65,14 +65,14 @@ fun SortDialog(
                 text = { Text(text = "Name") },
                 onClick = {
                     showSort.value = false
-                    libraryViewModel.sort(SortType.Name)
+                    libraryVM.sort(SortType.Name)
                 },
             )
             DropdownMenuItem(
                 text = { Text(text = "Date") },
                 onClick = {
                     showSort.value = false
-                    libraryViewModel.sort(SortType.Date)
+                    libraryVM.sort(SortType.Date)
                 },
             )
         }

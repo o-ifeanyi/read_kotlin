@@ -35,13 +35,18 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import java.util.Locale
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FolderScreen(id: UUID, name: String, libraryViewModel: LibraryViewModel) {
-    val state = libraryViewModel.state.collectAsState().value
+fun FolderScreen(
+    id: UUID,
+    name: String,
+    libraryVM: LibraryViewModel = hiltViewModel(),
+) {
+    val state = libraryVM.state.collectAsState().value
 
     val context = LocalContext.current
     val config = LocalConfiguration.current
@@ -69,17 +74,22 @@ fun FolderScreen(id: UUID, name: String, libraryViewModel: LibraryViewModel) {
     }
 
     LaunchedEffect(key1 = Unit) {
-        libraryViewModel.getFolderFiles(id)
+        libraryVM.getFolderFiles(id)
     }
 
     Scaffold(
         topBar = {
             if (isSelecting.value) {
                 SelectingTopBar(
-                    isSelecting, showSelectOptions, selectedFiles, selectedFolders, state.folderFiles, emptyList()
+                    isSelecting,
+                    showSelectOptions,
+                    selectedFiles,
+                    selectedFolders,
+                    state.folderFiles,
+                    emptyList()
                 )
             } else {
-                TopAppBar( title = { Text(text = name) } )
+                TopAppBar(title = { Text(text = name) })
             }
         }
     ) { padding ->
@@ -91,14 +101,14 @@ fun FolderScreen(id: UUID, name: String, libraryViewModel: LibraryViewModel) {
             showSelectOptions,
             selectedFiles,
             selectedFolders,
-            libraryViewModel
+            libraryVM
         )
         if (renameItem.value) {
             RenameSheet(
                 renameItem,
                 selectedFiles.firstOrNull(),
                 null,
-                libraryViewModel
+                libraryVM
             ) {
                 renameItem.value = false
                 isSelecting.value = false
@@ -109,7 +119,7 @@ fun FolderScreen(id: UUID, name: String, libraryViewModel: LibraryViewModel) {
             MoveFilesSheet(
                 moveFiles,
                 selectedFiles,
-                libraryViewModel
+                libraryVM
             ) {
                 moveFiles.value = false
                 isSelecting.value = false
@@ -119,7 +129,7 @@ fun FolderScreen(id: UUID, name: String, libraryViewModel: LibraryViewModel) {
         Column(
             modifier = Modifier.padding(
                 top = padding.calculateTopPadding(),
-                start = 15.dp, end = 15.dp,
+                start = 20.dp, end = 20.dp,
             ),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {

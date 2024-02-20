@@ -6,6 +6,8 @@ import android.ifeanyi.read.app.presentation.components.GridTileComponent
 import android.ifeanyi.read.app.presentation.components.TextFieldComponent
 import android.ifeanyi.read.app.presentation.components.ListTileComponent
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
+import android.ifeanyi.read.app.presentation.viewmodel.SettingsViewModel
+import android.ifeanyi.read.core.enums.DisplayStyle
 import android.ifeanyi.read.core.route.Routes
 import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
@@ -47,15 +49,19 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import java.util.Locale
 
-enum class ListStyle { List, Grid }
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewModel) {
-    val state = libraryViewModel.state.collectAsState().value
+fun LibraryScreen(
+    controller: NavHostController,
+    libraryVM: LibraryViewModel = hiltViewModel(),
+    settingsVM: SettingsViewModel = hiltViewModel()
+) {
+    val state = libraryVM.state.collectAsState().value
+    val settingsState = settingsVM.state.collectAsState().value
 
     val context = LocalContext.current
     val config = LocalConfiguration.current
@@ -74,8 +80,6 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
     val renameItem = remember { mutableStateOf(false) }
     val showSelectOptions = remember { mutableStateOf(false) }
     val moveFiles = remember { mutableStateOf(false) }
-
-    val listStyle = remember { mutableStateOf(ListStyle.Grid) }
 
     fun onFileClick(file: FileModel) {
         if (!isSelecting.value) {
@@ -125,8 +129,8 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
             }
         }
     ) { padding ->
-        DefaultDialog(padding, createFolder, showMore, showSort, isSelecting, listStyle)
-        SortDialog(padding, showSort, showMore, libraryViewModel)
+        DefaultDialog(padding, createFolder, showMore, showSort, isSelecting, settingsVM)
+        SortDialog(padding, showSort, showMore, libraryVM)
         SelectingDialog(
             padding,
             isSelecting,
@@ -135,17 +139,17 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
             showSelectOptions,
             selectedFiles,
             selectedFolders,
-            libraryViewModel
+            libraryVM
         )
         if (createFolder.value) {
-            CreateFolderSheet(createFolder, libraryViewModel)
+            CreateFolderSheet(createFolder, libraryVM)
         }
         if (renameItem.value) {
             RenameSheet(
                 renameItem,
                 selectedFiles.firstOrNull(),
                 selectedFolders.firstOrNull(),
-                libraryViewModel
+                libraryVM
             ) {
                 renameItem.value = false
                 isSelecting.value = false
@@ -157,7 +161,7 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
             MoveFilesSheet(
                 moveFiles,
                 selectedFiles,
-                libraryViewModel
+                libraryVM
             ) {
                 moveFiles.value = false
                 isSelecting.value = false
@@ -168,16 +172,16 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
         Column(
             modifier = Modifier.padding(
                 top = padding.calculateTopPadding(),
-                start = 15.dp, end = 15.dp,
+                start = 20.dp, end = 20.dp,
             ),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             TextFieldComponent(
-                value = searchText, 
+                value = searchText,
                 label = { Text(text = "Search") },
                 onValueChange = {
                     if (it.isEmpty()) return@TextFieldComponent
-                    libraryViewModel.search(it)
+                    libraryVM.search(it)
                 }, keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 )
@@ -191,8 +195,8 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 if (folders.isNotEmpty()) {
-                    when (listStyle.value) {
-                        ListStyle.Grid -> {
+                    when (settingsState.displayStyle) {
+                        DisplayStyle.Grid -> {
                             item {
                                 Text(text = "Folders", style = MaterialTheme.typography.titleSmall)
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -202,6 +206,8 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                                     verticalArrangement = Arrangement.spacedBy(10.dp)
                                 ) {
                                     folders.map { folder ->
+                                        val count = libraryVM.getFolderFilesCount(folder.id)
+
                                         Box {
                                             GridTileComponent(
                                                 asset = {
@@ -212,7 +218,11 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                                                     )
                                                 },
                                                 title = folder.name,
-                                                subtitle = folder.date.dwdm(locale),
+                                                subtitle = "${count.value ?: 0} items\n${
+                                                    folder.date.dwdm(
+                                                        locale
+                                                    )
+                                                }",
                                                 modifier = Modifier
                                                     .width(((config.screenWidthDp - 50) / 3).dp),
 
@@ -238,11 +248,13 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                             }
                         }
 
-                        ListStyle.List -> {
+                        DisplayStyle.List -> {
                             item {
                                 Text(text = "Folders", style = MaterialTheme.typography.titleSmall)
                             }
                             items(folders) { folder ->
+                                val count = libraryVM.getFolderFilesCount(folder.id)
+
                                 Box {
                                     ListTileComponent(
                                         modifier = Modifier
@@ -256,7 +268,7 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                                             )
                                         },
                                         title = folder.name,
-                                        subtitle = folder.date.dwdm(locale),
+                                        subtitle = "${count.value} items • ${folder.date.dwdm(locale)}",
                                         onClick = { onFolderClick(folder) },
                                         onLongPress = {
                                             if (isSelecting.value) return@ListTileComponent
@@ -279,8 +291,8 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                     }
                 }
                 if (files.isNotEmpty()) {
-                    when (listStyle.value) {
-                        ListStyle.Grid -> {
+                    when (settingsState.displayStyle) {
+                        DisplayStyle.Grid -> {
                             item {
 
                                 Text(text = "Files", style = MaterialTheme.typography.titleSmall)
@@ -339,7 +351,7 @@ fun LibraryScreen(controller: NavHostController, libraryViewModel: LibraryViewMo
                             }
                         }
 
-                        ListStyle.List -> {
+                        DisplayStyle.List -> {
                             item {
                                 Text(text = "Files", style = MaterialTheme.typography.titleSmall)
                             }

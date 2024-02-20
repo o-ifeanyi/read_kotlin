@@ -39,10 +39,10 @@ import java.util.Locale
 fun MoveFilesSheet(
     moveFiles: MutableState<Boolean>,
     selectedFiles: SnapshotStateList<FileModel>,
-    libraryViewModel: LibraryViewModel,
+    libraryVM: LibraryViewModel,
     onDone: () -> Unit,
 ) {
-    val state = libraryViewModel.state.collectAsState().value
+    val state = libraryVM.state.collectAsState().value
 
     val locale = Locale.getDefault()
     val coroutineScope = rememberCoroutineScope()
@@ -50,7 +50,7 @@ fun MoveFilesSheet(
 
     fun onSelect(folder: FolderModel) {
         coroutineScope.launch {
-            libraryViewModel.moveToFolder(id = folder.id, files = selectedFiles)
+            libraryVM.moveToFolder(id = folder.id, files = selectedFiles)
             modalSheetState.hide()
         }.invokeOnCompletion {
             onDone.invoke()
@@ -64,7 +64,7 @@ fun MoveFilesSheet(
         Column(
             modifier = Modifier
                 .fillMaxHeight(0.8f)
-                .padding(15.dp),
+                .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(text = "Select Folder", style = MaterialTheme.typography.titleLarge)

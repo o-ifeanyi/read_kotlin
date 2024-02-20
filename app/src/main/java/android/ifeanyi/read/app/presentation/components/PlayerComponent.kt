@@ -1,6 +1,7 @@
 package android.ifeanyi.read.app.presentation.components
 
 import android.annotation.SuppressLint
+import android.ifeanyi.read.app.presentation.viewmodel.SettingsViewModel
 import android.ifeanyi.read.app.presentation.views.speech.SpeechScreen
 import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
@@ -36,10 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PlayerComponent() {
+fun PlayerComponent(settingsVM: SettingsViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val state = SpeechService.state.collectAsState().value
 
@@ -54,7 +56,7 @@ fun PlayerComponent() {
         }
     ) { targetExpanded ->
         if (targetExpanded) {
-            SpeechScreen {
+            SpeechScreen(settingsVM = settingsVM) {
                 expanded = !expanded
             }
         } else {

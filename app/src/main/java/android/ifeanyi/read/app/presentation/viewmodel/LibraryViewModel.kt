@@ -4,6 +4,7 @@ import android.ifeanyi.read.app.data.LibraryRepository
 import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.FolderModel
 import android.ifeanyi.read.app.presentation.views.library.SortType
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -72,7 +73,7 @@ class LibraryViewModel @Inject constructor(private val libraryRepository: Librar
 
     fun moveToFolder(id: UUID, files: List<FileModel>) = viewModelScope.launch {
         for (file in files) {
-            libraryRepository.updateItem(file.copy(folder = id))
+            libraryRepository.updateItem(file.copy(parent = id))
         }
     }
 
@@ -80,6 +81,16 @@ class LibraryViewModel @Inject constructor(private val libraryRepository: Librar
         libraryRepository.getFolderFiles(id).distinctUntilChanged().collect { items ->
             _state.update { it.copy(folderFiles = items) }
         }
+    }
+
+    fun getFolderFilesCount(id: UUID): MutableLiveData<Int> {
+        val count = MutableLiveData(0)
+        viewModelScope.launch {
+            val data = libraryRepository.getFolderFilesCount(id)
+            println(data.value)
+            count.postValue(data.value)
+        }
+        return count
     }
 
     fun search(query: String) = viewModelScope.launch {

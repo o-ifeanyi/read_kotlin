@@ -15,4 +15,6 @@ data class FolderModel(
     val name: String,
     @ColumnInfo
     val date: Date = Date.from(Instant.now()),
+    @ColumnInfo
+    val parent: UUID? = null,
 )

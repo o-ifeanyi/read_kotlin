@@ -26,7 +26,7 @@ data class FileModel(
     @ColumnInfo
     val progress: Int = 0,
     @ColumnInfo
-    val folder: UUID? = null,
+    val parent: UUID? = null,
 ) {
     fun icon(): ImageVector {
          return when (type) {

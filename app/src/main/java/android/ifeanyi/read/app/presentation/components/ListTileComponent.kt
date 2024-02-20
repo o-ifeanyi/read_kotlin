@@ -48,7 +48,7 @@ fun ListTileComponent(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(text = title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold))
-                Text(text = subtitle, style = MaterialTheme.typography.labelMedium)
+                Text(text = subtitle, style = MaterialTheme.typography.bodySmall)
             }
         }
     }

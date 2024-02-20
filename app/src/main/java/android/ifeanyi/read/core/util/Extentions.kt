@@ -1,8 +1,11 @@
 package android.ifeanyi.read.core.util
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.OpenableColumns
+import androidx.core.content.ContextCompat
 import java.net.URI
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -20,6 +23,39 @@ val Locale.flagEmoji: String?
             null
         }
     }
+
+val Context.appVersion: String?
+    get() {
+        return try {
+            val info = this.packageManager.getPackageInfo(this.packageName, 0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                "${info.versionName}.${info.longVersionCode}"
+            } else {
+                "${info.versionName}.${info.versionCode}"
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
+
+fun Context.share(text: String) {
+    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, text)
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    ContextCompat.startActivity(this, shareIntent, null)
+}
+
+fun Context.mailTo(to: String, subject: String) {
+    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "vnd.android.cursor.item/email"
+        putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
+        putExtra(Intent.EXTRA_SUBJECT, subject)
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    ContextCompat.startActivity(this, shareIntent, null)
+}
 
 fun Uri.getName(context: Context): String {
     val returnCursor = context.contentResolver.query(this, null, null, null, null)

@@ -1,5 +1,7 @@
 package android.ifeanyi.read.app.presentation.views.library
 
+import android.ifeanyi.read.app.presentation.viewmodel.SettingsViewModel
+import android.ifeanyi.read.core.enums.DisplayStyle
 import android.ifeanyi.read.core.theme.AppIcons
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,14 +26,14 @@ fun DefaultDialog(
     showMore: MutableState<Boolean>,
     showSort: MutableState<Boolean>,
     isSelecting: MutableState<Boolean>,
-    listStyle: MutableState<ListStyle>
+    settingsVM: SettingsViewModel
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
                 top = padding.calculateTopPadding(),
-                start = 15.dp, end = 15.dp,
+                start = 20.dp, end = 20.dp,
             )
             .wrapContentSize(Alignment.TopEnd)
     ) {
@@ -78,7 +80,7 @@ fun DefaultDialog(
                 text = { Text(text = "List View") },
                 onClick = {
                     showMore.value = false
-                    listStyle.value = ListStyle.List
+                    settingsVM.setDisplayStyle(DisplayStyle.List)
                 },
                 trailingIcon = {
                     Icon(
@@ -91,7 +93,7 @@ fun DefaultDialog(
                 text = { Text(text = "Grid View") },
                 onClick = {
                     showMore.value = false
-                    listStyle.value = ListStyle.Grid
+                    settingsVM.setDisplayStyle(DisplayStyle.Grid)
                 },
                 trailingIcon = {
                     Icon(imageVector = AppIcons.gridView, contentDescription = "")

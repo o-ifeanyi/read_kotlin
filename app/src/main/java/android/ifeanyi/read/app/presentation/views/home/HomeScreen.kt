@@ -5,6 +5,8 @@ import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.LibraryType
 import android.ifeanyi.read.app.presentation.components.ListTileComponent
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
+import android.ifeanyi.read.app.presentation.viewmodel.SettingsViewModel
+import android.ifeanyi.read.app.presentation.views.settings.WhatsNewSheet
 import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.getName
@@ -22,21 +24,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(libraryViewModel: LibraryViewModel) {
+fun HomeScreen(
+    libraryVM: LibraryViewModel = hiltViewModel(),
+    settingsVM: SettingsViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
 
-
+    val settingState = settingsVM.state.collectAsState().value
 
     val showUrlSheet = remember { mutableStateOf(false) }
 
@@ -53,7 +60,7 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
             path = newUri.toString(),
         )
         SpeechService.updateModel(context, model)
-        libraryViewModel.insertItem(model)
+        libraryVM.insertItem(model)
     }
 
     val docLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
@@ -75,12 +82,15 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
         }
     ) { padding ->
         if (showUrlSheet.value) {
-            EnterUrlSheet(showUrlSheet, libraryViewModel)
+            EnterUrlSheet(showUrlSheet, libraryVM)
+        }
+        if (settingState.showWhatsNew.value) {
+            WhatsNewSheet(showWhatsNewSheet = settingState.showWhatsNew)
         }
         LazyColumn(
             contentPadding = PaddingValues(
                 top = padding.calculateTopPadding(),
-                start = 15.dp, end = 15.dp,
+                start = 20.dp, end = 20.dp,
                 bottom = 200.dp
             ),
             verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -88,8 +98,10 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
             item {
                 ListTileComponent(
                     asset = {
-                        Icon(imageVector = AppIcons.doc, contentDescription = "",modifier = Modifier
-                            .size(50.dp))
+                        Icon(
+                            imageVector = AppIcons.doc, contentDescription = "", modifier = Modifier
+                                .size(50.dp)
+                        )
                     },
                     title = "Pick document",
                     subtitle = "SizeTransform defines how the",
@@ -100,8 +112,12 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
             item {
                 ListTileComponent(
                     asset = {
-                        Icon(imageVector = AppIcons.image, contentDescription = "",modifier = Modifier
-                            .size(50.dp))
+                        Icon(
+                            imageVector = AppIcons.image,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(50.dp)
+                        )
                     },
                     title = "Pick image",
                     subtitle = "SizeTransform defines how the",
@@ -118,8 +134,12 @@ fun HomeScreen(libraryViewModel: LibraryViewModel) {
             item {
                 ListTileComponent(
                     asset = {
-                        Icon(imageVector = AppIcons.link, contentDescription = "",modifier = Modifier
-                            .size(50.dp))
+                        Icon(
+                            imageVector = AppIcons.link,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(50.dp)
+                        )
                     },
                     title = "Paste web link",
                     subtitle = "SizeTransform defines how the",

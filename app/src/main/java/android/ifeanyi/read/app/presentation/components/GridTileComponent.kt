@@ -15,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -25,6 +27,7 @@ fun GridTileComponent(
     asset: @Composable (() -> Unit?)? = null,
     title: String? = null,
     subtitle: String,
+    tonalElevation: Dp = 1.dp,
     onClick: () -> Unit,
     onLongPress: (() -> Unit)? = null,
 ) {
@@ -36,12 +39,12 @@ fun GridTileComponent(
                 onLongClick = { onLongPress?.invoke() }
             ),
         shape = MaterialTheme.shapes.small,
-        tonalElevation = 1.dp,
+        tonalElevation = tonalElevation,
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 15.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             if (asset?.invoke() == null) Icon(
                 imageVector = AppIcons.flag,
@@ -51,13 +54,13 @@ fun GridTileComponent(
             if (title != null) Text(
                 text = title, maxLines = 1,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
             )
             Text(
                 text = subtitle,
                 maxLines = 2,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.bodySmall
             )
         }
     }

@@ -5,16 +5,19 @@ import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
 import androidx.compose.material.icons.automirrored.outlined.InsertDriveFile
 import androidx.compose.material.icons.automirrored.outlined.Sort
 import androidx.compose.material.icons.automirrored.outlined.ViewList
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.ColorLens
 import androidx.compose.material.icons.outlined.CreateNewFolder
+import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.DriveFileRenameOutline
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.NewReleases
 import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material.icons.outlined.RecordVoiceOver
@@ -23,6 +26,8 @@ import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material.icons.rounded.CheckBox
 import androidx.compose.material.icons.rounded.CheckBoxOutlineBlank
+import androidx.compose.material.icons.rounded.FastForward
+import androidx.compose.material.icons.rounded.FastRewind
 import androidx.compose.material.icons.rounded.FlagCircle
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.MoreVert
@@ -39,6 +44,8 @@ object AppIcons {
     val pause = Icons.Rounded.Pause
     val play = Icons.Rounded.PlayArrow
     val stop = Icons.Rounded.Stop
+    val forward = Icons.Rounded.FastForward
+    val rewind = Icons.Rounded.FastRewind
     val speechRate = Icons.Rounded.Speed
     val more = Icons.Rounded.MoreVert
     val newFolder = Icons.Outlined.CreateNewFolder
@@ -55,10 +62,13 @@ object AppIcons {
     val keyLeft = Icons.AutoMirrored.Rounded.KeyboardArrowLeft
     val flag = Icons.Rounded.FlagCircle
     val theme = Icons.Outlined.ColorLens
+    val dark = Icons.Outlined.DarkMode
+    val light = Icons.Outlined.LightMode
     val star = Icons.Outlined.StarBorder
     val question = Icons.Outlined.QuestionMark
     val share = Icons.Outlined.Share
     val shield = Icons.Outlined.Shield
     val newRelease = Icons.Outlined.NewReleases
     val about = Icons.Outlined.Info
+    val waveform = Icons.AutoMirrored.Outlined.VolumeUp
 }

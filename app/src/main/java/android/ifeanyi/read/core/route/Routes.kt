@@ -6,5 +6,7 @@ enum class Routes {
     LibraryScreen,
     FolderScreen,
     SettingsScreen,
-    SettingsTwoScreen
+    AboutAppScreen,
+    TextToSpeechScreen,
+    AppearanceScreen
 }

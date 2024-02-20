@@ -2,12 +2,17 @@ package android.ifeanyi.read.app.presentation.views.settings
 
 import android.annotation.SuppressLint
 import android.ifeanyi.read.app.presentation.components.SettingsItem
+import android.ifeanyi.read.core.route.Routes
+import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
+import android.ifeanyi.read.core.util.appVersion
+import android.ifeanyi.read.core.util.mailTo
+import android.ifeanyi.read.core.util.share
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,9 +22,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
@@ -27,15 +39,31 @@ import androidx.navigation.NavHostController
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SettingsScreen(controller: NavHostController) {
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+
+    val showWhatsNewSheet = remember { mutableStateOf(false) }
+
+    val state = SpeechService.state.collectAsState().value
+
+    LaunchedEffect(key1 = Unit) {
+        if (state.voices.isEmpty()) {
+            SpeechService.initTTSVoices(context)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = "Settings") })
         }
     ) { padding ->
+        if (showWhatsNewSheet.value) {
+            WhatsNewSheet(showWhatsNewSheet = showWhatsNewSheet)
+        }
         LazyColumn(
             contentPadding = PaddingValues(
                 top = padding.calculateTopPadding(),
-                start = 15.dp, end = 15.dp,
+                start = 20.dp, end = 20.dp,
                 bottom = 200.dp
             ),
             verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -50,17 +78,16 @@ fun SettingsScreen(controller: NavHostController) {
                             title = "Appearance",
                             icon = AppIcons.theme,
                             color = Color(0xFF0984FF)
-                        )
+                        ) {
+                            controller.navigate(Routes.AppearanceScreen.name)
+                        }
                         SettingsItem(
-                            title = "Speaking Voice",
-                            icon = AppIcons.speaker,
+                            title = "Text To Speech",
+                            icon = AppIcons.waveform,
                             color = Color(0xFFFF365F)
-                        )
-                        SettingsItem(
-                            title = "Speech Rate",
-                            icon = AppIcons.speechRate,
-                            color = Color(0xFFFF9E08)
-                        )
+                        ) {
+                            controller.navigate(Routes.TextToSpeechScreen.name)
+                        }
                     }
                 }
             }
@@ -71,39 +98,26 @@ fun SettingsScreen(controller: NavHostController) {
                 Surface(tonalElevation = 1.dp, shape = MaterialTheme.shapes.small) {
                     Column(modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
                         SettingsItem(
-                            title = "Leave a Review",
+                            title = "Leave A Review",
                             icon = AppIcons.star,
                             color = Color(0xFF0F85FF)
-                        )
+                        ) {
+                            uriHandler.openUri(uri = "https://stackoverflow.com/")
+                        }
                         SettingsItem(
                             title = "Contact Support",
                             icon = AppIcons.question,
                             color = Color(0xFF30D157)
-                        )
+                        ) {
+                            context.mailTo(to = "ifeanyi@gmail.com", subject = "Hey Support")
+                        }
                         SettingsItem(
-                            title = "Share This App",
+                            title = "Share App",
                             icon = AppIcons.share,
-                            color = Color(0xFF63E6E2)
-                        )
-                    }
-                }
-            }
-            item {
-                Text(text = "Legal", fontWeight = FontWeight.SemiBold)
-            }
-            item {
-                Surface(tonalElevation = 1.dp, shape = MaterialTheme.shapes.small) {
-                    Column(modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
-                        SettingsItem(
-                            title = "Privacy Policy",
-                            icon = AppIcons.shield,
-                            color = Color(0XFFBF5AF2)
-                        )
-                        SettingsItem(
-                            title = "Terms of Service",
-                            icon = AppIcons.doc,
-                            color = Color(0xFF63D2FF)
-                        )
+                            color = Color(0xFFFF9E08)
+                        ) {
+                            context.share("https://stackoverflow.com/")
+                        }
                     }
                 }
             }
@@ -117,12 +131,26 @@ fun SettingsScreen(controller: NavHostController) {
                             title = "What's New",
                             icon = AppIcons.newRelease,
                             color = Color(0xFFFF453A)
-                        )
+                        ) {
+                            showWhatsNewSheet.value = true
+                        }
                         SettingsItem(
-                            title = "About This App",
+                            title = "About App",
                             icon = AppIcons.about,
-                            color = Color.Black
-                        )
+                            color = Color.Black,
+                        ) {
+                            controller.navigate(Routes.AboutAppScreen.name)
+                        }
+                    }
+                }
+            }
+            item {
+                if (context.appVersion != null) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "VER ${context.appVersion}", textAlign = TextAlign.Center)
                     }
                 }
             }

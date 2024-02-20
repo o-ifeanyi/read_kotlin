@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FolderDao {
-    @Query(value = "SELECT * from folder_table")
+    @Query(value = "SELECT * FROM folder_table")
     fun getAllFolders() : Flow<List<FolderModel>>
 
     @Insert(entity = FolderModel::class, onConflict = OnConflictStrategy.REPLACE)

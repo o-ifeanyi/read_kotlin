@@ -18,6 +18,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +34,7 @@ fun RenameSheet(
     renameItem: MutableState<Boolean>,
     file: FileModel? = null,
     folder: FolderModel? =null,
-    libraryViewModel: LibraryViewModel,
+    libraryVM: LibraryViewModel,
     onDone: () -> Unit,
 ) {
     val name = remember { mutableStateOf("") }
@@ -43,14 +44,18 @@ fun RenameSheet(
     fun onContinue() {
         coroutineScope.launch {
             if (file != null) {
-                libraryViewModel.updateItem(file.copy(name = name.value))
+                libraryVM.updateItem(file.copy(name = name.value))
             } else if (folder != null) {
-                libraryViewModel.updateItem(folder.copy(name = name.value))
+                libraryVM.updateItem(folder.copy(name = name.value))
             }
             modalSheetState.hide()
         }.invokeOnCompletion {
             onDone.invoke()
         }
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        name.value = file?.name ?: folder?.name ?: ""
     }
 
     ModalBottomSheet(
@@ -60,7 +65,7 @@ fun RenameSheet(
         Column(
             modifier = Modifier
                 .fillMaxHeight(0.5f)
-                .padding(15.dp),
+                .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(text = "Rename", style = MaterialTheme.typography.titleLarge)

@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 fun EnterUrlSheet(
     showUrlSheet: MutableState<Boolean>,
-    libraryViewModel: LibraryViewModel
+    libraryVM: LibraryViewModel,
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -50,7 +50,7 @@ fun EnterUrlSheet(
 
         coroutineScope.launch {
             SpeechService.updateModel(context, model)
-            libraryViewModel.insertItem(model)
+            libraryVM.insertItem(model)
             modalSheetState.hide()
         }.invokeOnCompletion {
             showUrlSheet.value = false
@@ -64,7 +64,7 @@ fun EnterUrlSheet(
         Column(
             modifier = Modifier
                 .fillMaxHeight(0.5f)
-                .padding(15.dp),
+                .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(text = "Enter link", style = MaterialTheme.typography.titleLarge)
