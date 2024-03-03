@@ -1,5 +1,6 @@
 package android.ifeanyi.read.app.presentation.views.home
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.LibraryType
@@ -11,9 +12,11 @@ import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.getName
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
@@ -24,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +38,7 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -75,6 +80,15 @@ fun HomeScreen(
                 handleUriToModel(uri, LibraryType.Image)
             }
         }
+
+    val notificationPermission = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { }
+    )
+
+    LaunchedEffect(key1 = Unit) {
+        notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
 
     Scaffold(
         topBar = {

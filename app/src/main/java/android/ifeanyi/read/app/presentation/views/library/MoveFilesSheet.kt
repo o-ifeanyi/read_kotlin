@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -87,8 +86,7 @@ fun MoveFilesSheet(
                             },
                             title = folder.name,
                             subtitle = folder.date.dwdm(locale),
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            tonalElevation = 2.dp,
                             onClick = { onSelect(folder) }
                         )
                     }

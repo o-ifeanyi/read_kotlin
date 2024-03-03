@@ -30,6 +30,8 @@ object TextParser {
             stripper.endPage = 1
             val result = stripper.getText(doc).replace("\n", " ")
             onComplete.invoke(result)
+            doc.close()
+            inputStream?.close()
         } catch (e: IOException) {
             e.printStackTrace()
         }

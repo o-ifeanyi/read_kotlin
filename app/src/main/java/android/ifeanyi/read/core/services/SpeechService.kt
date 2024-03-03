@@ -131,6 +131,9 @@ object SpeechService : ViewModel() {
         ) { res ->
             if (res == TextToSpeech.SUCCESS) {
                 _textToSpeech?.let { speaker ->
+
+                    NotificationService.showMediaStyleNotification(context)
+
                     if (_state.value.voices.isEmpty()) {
                         _state.update { it.copy(voices = speaker.voices.toList()) }
                     }

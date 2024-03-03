@@ -23,7 +23,7 @@ val Locale.flagEmoji: String?
             null
         }
     }
-
+@Suppress("DEPRECATION")
 val Context.appVersion: String?
     get() {
         return try {

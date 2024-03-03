@@ -66,23 +66,25 @@ dependencies {
     // URL to text
     implementation("org.jsoup:jsoup:1.14.3")
     // Font
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.1")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.2")
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
+    implementation("com.google.dagger:hilt-android:2.49")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     // Material icons
-    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    implementation("androidx.compose.material:material-icons-extended:1.6.2")
     // Fix PendingIntent crash
     implementation("androidx.work:work-runtime:2.9.0")
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     // GSON
     implementation("com.google.code.gson:gson:2.10.1")
+    // Media Notification
+    implementation("androidx.media:media:1.7.0")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
