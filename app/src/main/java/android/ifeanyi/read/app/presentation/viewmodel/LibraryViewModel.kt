@@ -4,7 +4,8 @@ import android.ifeanyi.read.app.data.LibraryRepository
 import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.FolderModel
 import android.ifeanyi.read.app.presentation.views.library.SortType
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,12 +84,12 @@ class LibraryViewModel @Inject constructor(private val libraryRepository: Librar
         }
     }
 
-    fun getFolderFilesCount(id: UUID): MutableLiveData<Int> {
-        val count = MutableLiveData(0)
+    fun getFolderFilesCount(id: UUID): MutableIntState {
+        val count = mutableIntStateOf(0)
         viewModelScope.launch {
-            val data = libraryRepository.getFolderFilesCount(id)
-            println(data.value)
-            count.postValue(data.value)
+            libraryRepository.getFolderFilesCount(id).distinctUntilChanged().collect { item ->
+                count.intValue = item
+            }
         }
         return count
     }

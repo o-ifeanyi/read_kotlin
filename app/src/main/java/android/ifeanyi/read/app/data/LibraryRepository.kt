@@ -16,7 +16,7 @@ class LibraryRepository @Inject constructor(private val fileDao: FileDao, privat
     suspend fun deleteItem(item: FileModel) = fileDao.delete(item)
     fun getAllFiles() = fileDao.getAllFiles().flowOn(Dispatchers.IO).conflate()
     fun getFolderFiles(id: UUID) = fileDao.getFolderFiles(id).flowOn(Dispatchers.IO).conflate()
-    fun getFolderFilesCount(id: UUID) = fileDao.getFolderFilesCount(id)
+    fun getFolderFilesCount(id: UUID) = fileDao.getFolderFilesCount(id).flowOn(Dispatchers.IO).conflate()
 
     suspend fun insertItem(item: FolderModel) = folderDao.insert(item)
     suspend fun updateItem(item: FolderModel) = folderDao.update(item)

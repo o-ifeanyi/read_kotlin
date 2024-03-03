@@ -1,7 +1,6 @@
 package android.ifeanyi.read.app.data.source
 
 import android.ifeanyi.read.app.data.models.FileModel
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -20,7 +19,7 @@ interface FileDao {
     fun getFolderFiles(id: UUID) : Flow<List<FileModel>>
 
     @Query(value = "SELECT COUNT(*) FROM file_table WHERE parent IS :id")
-    fun getFolderFilesCount(id: UUID) : LiveData<Int>
+    fun getFolderFilesCount(id: UUID) : Flow<Int>
 
     @Insert(entity = FileModel::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: FileModel)

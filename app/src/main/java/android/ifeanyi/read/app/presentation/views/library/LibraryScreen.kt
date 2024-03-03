@@ -38,6 +38,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import java.util.Locale
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -189,7 +191,13 @@ fun LibraryScreen(
 
             val files = if (searchText.value.isEmpty()) state.files else state.searchedFiles
             val folders = if (searchText.value.isEmpty()) state.folders else state.searchedFolders
+            val counts = mutableMapOf<UUID, MutableIntState>()
 
+            if (folders.isNotEmpty() && counts.isEmpty()) {
+                for (folder in folders) {
+                    counts[folder.id] = libraryVM.getFolderFilesCount(folder.id)
+                }
+            }
             LazyColumn(
                 contentPadding = PaddingValues(bottom = 200.dp),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -206,8 +214,6 @@ fun LibraryScreen(
                                     verticalArrangement = Arrangement.spacedBy(10.dp)
                                 ) {
                                     folders.map { folder ->
-                                        val count = libraryVM.getFolderFilesCount(folder.id)
-
                                         Box {
                                             GridTileComponent(
                                                 asset = {
@@ -218,13 +224,13 @@ fun LibraryScreen(
                                                     )
                                                 },
                                                 title = folder.name,
-                                                subtitle = "${count.value ?: 0} items\n${
+                                                subtitle = "${counts[folder.id]?.intValue ?: 0} items\n${
                                                     folder.date.dwdm(
                                                         locale
                                                     )
                                                 }",
                                                 modifier = Modifier
-                                                    .width(((config.screenWidthDp - 50) / 3).dp),
+                                                    .width(((config.screenWidthDp - 61) / 3).dp),
 
                                                 onClick = { onFolderClick(folder) },
                                                 onLongPress = {
@@ -253,8 +259,6 @@ fun LibraryScreen(
                                 Text(text = "Folders", style = MaterialTheme.typography.titleSmall)
                             }
                             items(folders) { folder ->
-                                val count = libraryVM.getFolderFilesCount(folder.id)
-
                                 Box {
                                     ListTileComponent(
                                         modifier = Modifier
@@ -268,7 +272,7 @@ fun LibraryScreen(
                                             )
                                         },
                                         title = folder.name,
-                                        subtitle = "${count.value} items • ${folder.date.dwdm(locale)}",
+                                        subtitle = "${counts[folder.id]?.intValue ?: 0} items • ${folder.date.dwdm(locale)}",
                                         onClick = { onFolderClick(folder) },
                                         onLongPress = {
                                             if (isSelecting.value) return@ListTileComponent
@@ -320,7 +324,7 @@ fun LibraryScreen(
                                                     )
                                                 }",
                                                 modifier = Modifier
-                                                    .width(((config.screenWidthDp - 50) / 3).dp)
+                                                    .width(((config.screenWidthDp - 61) / 3).dp)
                                                     .pointerInput(Unit) {
                                                         detectTapGestures(
                                                             onLongPress = {
@@ -399,3 +403,4 @@ fun LibraryScreen(
         }
     }
 }
+
