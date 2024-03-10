@@ -10,22 +10,34 @@ object RoomConverters {
     private val gson = Gson()
 
     @TypeConverter
-    fun fromJson(json: String): List<NewFeature> {
-        val listType = object : TypeToken<List<NewFeature>>() {}.type
-        return gson.fromJson(json, listType)
+    fun featuresFromJson(json: String): List<NewFeature> {
+        val type = object : TypeToken<List<NewFeature>>() {}.type
+        return gson.fromJson(json, type)
     }
 
     @TypeConverter
-    fun toJson(features: List<NewFeature>): String {
+    fun featuresToJson(features: List<NewFeature>): String {
         return gson.toJson(features)
     }
+
     @TypeConverter
-    fun toDate(timestamp: Long?): Date? {
+    fun rangeFromJson(json: String): IntRange {
+        val type = object : TypeToken<IntRange>() {}.type
+        return gson.fromJson(json, type)
+    }
+
+    @TypeConverter
+    fun rangeToJson(range: IntRange): String {
+        return gson.toJson(range)
+    }
+
+    @TypeConverter
+    fun dateFromTimeStamp(timestamp: Long?): Date? {
         return if (timestamp == null) null else Date(timestamp)
     }
 
     @TypeConverter
-    fun toTimestamp(date: Date?): Long? {
+    fun dateToTimestamp(date: Date?): Long? {
         return date?.time
     }
 }

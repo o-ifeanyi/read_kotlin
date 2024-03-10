@@ -1,6 +1,5 @@
 package android.ifeanyi.read.app.presentation.components
 
-import android.ifeanyi.read.app.presentation.viewmodel.SettingsViewModel
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -20,7 +19,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -34,11 +32,10 @@ import kotlin.math.max
 fun CustomSliderSheet(
     showRateSheet: MutableState<Boolean>,
     modalSheetState: SheetState,
-    settingsVM: SettingsViewModel,
+    initialProgress: Float,
     onDone: (result: Float) -> Unit
 ) {
-    val state = settingsVM.state.collectAsState().value
-    val progress = remember { mutableFloatStateOf(state.speechRate / 2) }
+    val progress = remember { mutableFloatStateOf(initialProgress) }
     val position = animateFloatAsState(
         targetValue = progress.floatValue,
         animationSpec = spring(),

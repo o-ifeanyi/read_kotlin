@@ -4,6 +4,7 @@ import android.ifeanyi.read.app.presentation.components.BottomNavigationBarCompo
 import android.ifeanyi.read.app.presentation.components.PlayerComponent
 import android.ifeanyi.read.app.presentation.views.speech.SpeechScreen
 import android.ifeanyi.read.core.route.Router
+import android.ifeanyi.read.core.services.NotificationService
 import android.ifeanyi.read.core.services.SnackBarService
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -37,8 +38,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-//    private lateinit var mediaSession: MediaSessionCompat
-//    private lateinit var mediaSessionConnector: MediaSessionConnector
+    override fun onDestroy() {
+        NotificationService.destroy()
+        super.onDestroy()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

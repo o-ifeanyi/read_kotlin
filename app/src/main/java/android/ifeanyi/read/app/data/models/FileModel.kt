@@ -9,7 +9,7 @@ import java.time.Instant
 import java.util.Date
 import java.util.UUID
 
-enum class LibraryType { Pdf, Image, Url }
+enum class LibraryType { Pdf, Img, Url }
 
 @Entity(tableName = "file_table")
 data class FileModel(
@@ -24,15 +24,32 @@ data class FileModel(
     @ColumnInfo
     val path: String,
     @ColumnInfo
+    val wordRange: IntRange = IntRange(0, 0),
+    @ColumnInfo
+    val wordIndex: Int = 0,
+    @ColumnInfo
     val progress: Int = 0,
+    @ColumnInfo
+    val currentPage: Int = 1,
+    @ColumnInfo
+    val totalPages: Int = 1,
     @ColumnInfo
     val parent: UUID? = null,
 ) {
     fun icon(): ImageVector {
          return when (type) {
             LibraryType.Pdf -> AppIcons.doc
-            LibraryType.Image -> AppIcons.image
+            LibraryType.Img -> AppIcons.image
             LibraryType.Url -> AppIcons.link
         }
     }
+
+    val absProgress: Int
+        get() {
+            val value = (currentPage.toDouble() / totalPages.toDouble()) * 100
+            if (totalPages > 1) {
+                return value.toInt()
+            }
+            return progress
+        }
 }

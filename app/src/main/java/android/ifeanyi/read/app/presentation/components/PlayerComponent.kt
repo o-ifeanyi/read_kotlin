@@ -20,11 +20,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -47,24 +50,24 @@ fun PlayerComponent(expanded: Boolean, onClick: () -> Unit) {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(15.dp)
                 ) {
                     WaveForm(animating = !expanded && state.isPlaying)
 
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(
-                        onClick = {
-                            SpeechService.stop()
-                        },
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(40.dp),
-                            imageVector = AppIcons.stop,
-                            contentDescription = "Stop Button",
-                            tint = MaterialTheme.colorScheme.primary
+                    if (state.model != null) {
+                        Text(
+                            text = state.model.name,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.fillMaxWidth(0.7f)
                         )
                     }
+
+                    Spacer(modifier = Modifier.weight(1f))
                     IconButton(
+                        modifier = Modifier.size(40.dp),
                         onClick = {
                             if (state.isPlaying) SpeechService.pause() else SpeechService.play(
                                 context = context

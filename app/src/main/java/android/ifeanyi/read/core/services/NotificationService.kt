@@ -17,68 +17,29 @@ import androidx.media.app.NotificationCompat as MediaNotification
 
 const val ACTION_FORWARD = "ACTION_FORWARD"
 const val ACTION_REWIND = "ACTION_REWIND"
+const val CHANNEL_ID = "TTS_NOTIFICATION_CHANNEL"
 
 object NotificationService {
-    fun showMediaStyleNotification(context: Context) {
-        println("SHOWING========")
-        val channelId = "TTS_NOTIFICATION_CHANNEL"
-        val session = MediaSessionCompat(context, "MediaSession")
+    private lateinit var appContext: Context
+    private lateinit var session: MediaSessionCompat
 
-        val callback = object : MediaSessionCompat.Callback() {
-            override fun onCustomAction(action: String?, extras: Bundle?) {
-                when (action) {
-                    "ACTION_FORWARD" -> {
-                        println("Forward")
-                    }
-                    "ACTION_REWIND" -> {
-                        println("Rewind")
-                    }
-                }
-            }
+    fun init(context: Context) {
+        appContext = context
+        session = MediaSessionCompat(appContext, "MediaSession")
+    }
 
-            override fun onPlay() {
-                println("Play")
-            }
+    fun destroy() {
+        val notificationManagerCompat = NotificationManagerCompat.from(appContext)
+        notificationManagerCompat.cancel(0)
+        session.release()
+    }
 
-            override fun onPause() {
-                println("Pause")
-            }
-
-            override fun onFastForward() {
-                println("Forward")
-            }
-        }
-
-        val playbackStateBuilder = PlaybackStateCompat.Builder()
-            .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE)
-            .setState(PlaybackStateCompat.STATE_PAUSED, 10000, 1f)
-            .addCustomAction(ACTION_REWIND,
-                "Rewind",
-                R.drawable.round_fast_rewind_24)
-            .addCustomAction(ACTION_FORWARD,
-                "Forward",
-                R.drawable.round_fast_forward_24)
-
-        val metadata = MediaMetadataCompat.Builder()
-            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, "File Title")
-            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "File Subtitle")
-            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 30000)
-            .build()
-
-        session.setPlaybackState(playbackStateBuilder.build())
-        session.setCallback(callback)
-        session.setMetadata(metadata)
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.round_record_voice_over_24)
-            .setStyle(MediaNotification.MediaStyle().setMediaSession(session.sessionToken))
-            .setOngoing(true)
-            .setAutoCancel(false)
-            .setShowWhen(false)
-
+    fun showMediaStyleNotification() {
+        val state = SpeechService.state.value
+        if (state.model == null) return
 
         if (ActivityCompat.checkSelfPermission(
-                context,
+                appContext,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -86,8 +47,67 @@ object NotificationService {
             return
         }
 
+        val callback = object : MediaSessionCompat.Callback() {
+            override fun onCustomAction(action: String?, extras: Bundle?) {
+                when (action) {
+                    ACTION_FORWARD -> {
+                        SpeechService.forward(appContext)
+                    }
+
+                    ACTION_REWIND -> {
+                        SpeechService.rewind(appContext)
+                    }
+                }
+            }
+
+            override fun onPlay() {
+                SpeechService.play(appContext)
+            }
+
+            override fun onPause() {
+                SpeechService.pause()
+            }
+        }
+
+        val playbackStateBuilder = PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE)
+            .setState(
+                if (state.isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
+                (state.progress * 100).toLong(),
+                1f
+            )
+            .addCustomAction(
+                ACTION_REWIND,
+                "Rewind",
+                R.drawable.round_replay_10_24
+            )
+            .addCustomAction(
+                ACTION_FORWARD,
+                "Forward",
+                R.drawable.round_forward_10_24
+            )
+            .build()
+
+        val file = state.model
+        val metadata = MediaMetadataCompat.Builder()
+            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, file.name)
+            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, file.type.name.lowercase())
+            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 100)
+            .build()
+
+        session.setPlaybackState(playbackStateBuilder)
+        session.setCallback(callback)
+        session.setMetadata(metadata)
+
+        val builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
+            .setSmallIcon(R.drawable.round_record_voice_over_24)
+            .setStyle(MediaNotification.MediaStyle().setMediaSession(session.sessionToken))
+            .setOngoing(true)
+            .setAutoCancel(false)
+            .setShowWhen(false)
+
         val notification = builder.build()
-        val notificationManagerCompat = NotificationManagerCompat.from(context)
+        val notificationManagerCompat = NotificationManagerCompat.from(appContext)
 
         createNotificationChannel(notificationManagerCompat)
 
@@ -95,11 +115,10 @@ object NotificationService {
     }
 
     private fun createNotificationChannel(notificationManagerCompat: NotificationManagerCompat) {
-        val channelId = "TTS_NOTIFICATION_CHANNEL"
         val channelName = "Text To Speech Notification Channel"
         val channelDescription = "Channel for TTS notifications"
         val importance = NotificationManager.IMPORTANCE_LOW
-        val notificationChannel = NotificationChannel(channelId, channelName, importance).apply {
+        val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, importance).apply {
             description = channelDescription
         }
 

@@ -6,10 +6,12 @@ import android.ifeanyi.read.app.presentation.viewmodel.SettingsViewModel
 import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -31,7 +34,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
@@ -40,11 +46,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: () -> Unit) {
     val context = LocalContext.current
+    val config = LocalConfiguration.current
     val state = SpeechService.state.collectAsState().value
+    val settingState = settingsVM.state.collectAsState().value
 
     val coroutineScope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState()
 
+    val showPageSheet = remember { mutableStateOf(false) }
     val showVoicesSheet = remember { mutableStateOf(false) }
     val showRateSheet = remember { mutableStateOf(false) }
 
@@ -57,6 +66,16 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
                 navigationIcon = {
                     BackHandler(enabled = true) {
                         onCollapse.invoke()
+                    }
+                },
+                actions = {
+                    if (state.model != null) {
+                        val model = state.model
+                        TextButton(onClick = {
+                            showPageSheet.value = true
+                        }) {
+                            Text(text = "Page ${model.currentPage} of ${model.totalPages}", fontWeight = FontWeight.SemiBold)
+                        }
                     }
                 }
             )
@@ -170,7 +189,7 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
             CustomSliderSheet(
                 showRateSheet = showRateSheet,
                 modalSheetState = modalSheetState,
-                settingsVM = settingsVM,
+                initialProgress = settingState.speechRate / 2,
             ) { rate ->
                 coroutineScope.launch {
                     settingsVM.setSpeechRate(rate)
@@ -182,7 +201,24 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
             }
         }
 
+        if (showPageSheet.value) {
+            GoToPageSheet(
+                showPageSheet = showPageSheet,
+                modalSheetState = modalSheetState,
+            )
+        }
+
         LazyColumn(
+            modifier = Modifier.fillMaxSize().pointerInput(Unit) {
+                detectTapGestures { offset ->
+                    val location = offset.x.toDp().value
+                    if (location <= config.screenWidthDp * 0.35) {
+                        SpeechService.prevPage(context)
+                    } else if (location >= config.screenWidthDp * 0.65) {
+                        SpeechService.nextPage(context)
+                    }
+                }
+            },
             contentPadding = PaddingValues(
                 top = padding.calculateTopPadding(),
                 start = 20.dp, end = 20.dp,

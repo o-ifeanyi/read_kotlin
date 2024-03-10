@@ -318,7 +318,7 @@ fun LibraryScreen(
                                                     )
                                                 },
                                                 title = file.name,
-                                                subtitle = "${file.type.name.lowercase()} • ${file.progress}%\n${
+                                                subtitle = "${file.type.name.lowercase()} • ${file.absProgress}%\n${
                                                     file.date.dwdm(
                                                         locale
                                                     )
@@ -373,7 +373,7 @@ fun LibraryScreen(
                                             )
                                         },
                                         title = file.name,
-                                        subtitle = "${file.type.name.lowercase()} • ${file.progress}% • ${
+                                        subtitle = "${file.type.name.lowercase()} • ${file.absProgress}% • ${
                                             file.date.dwdm(
                                                 locale
                                             )

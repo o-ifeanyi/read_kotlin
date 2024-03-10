@@ -8,6 +8,7 @@ import android.ifeanyi.read.app.presentation.components.ListTileComponent
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
 import android.ifeanyi.read.app.presentation.viewmodel.SettingsViewModel
 import android.ifeanyi.read.app.presentation.views.settings.WhatsNewSheet
+import android.ifeanyi.read.core.services.NotificationService
 import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.getName
@@ -77,7 +78,7 @@ fun HomeScreen(
     val imageLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
             it?.let { uri ->
-                handleUriToModel(uri, LibraryType.Image)
+                handleUriToModel(uri, LibraryType.Img)
             }
         }
 
@@ -87,6 +88,10 @@ fun HomeScreen(
     )
 
     LaunchedEffect(key1 = Unit) {
+        NotificationService.init(context)
+        SpeechService.initUpdateModel {
+            libraryVM.updateItem(it)
+        }
         notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 

@@ -62,7 +62,7 @@ fun TextToSpeechScreen(settingsVM: SettingsViewModel = hiltViewModel()) {
             CustomSliderSheet(
                 showRateSheet = showRateSheet,
                 modalSheetState = modalSheetState,
-                settingsVM = settingsVM
+                initialProgress = state.speechRate / 2
             ) { rate ->
                 coroutineScope.launch {
                     settingsVM.setSpeechRate(rate)

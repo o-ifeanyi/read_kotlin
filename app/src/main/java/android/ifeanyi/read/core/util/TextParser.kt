@@ -20,16 +20,16 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object TextParser {
-    fun parsePdf(context: Context, uri: Uri, onComplete: (result: String) -> Unit) {
+    fun parsePdf(context: Context, uri: Uri, page: Int, onComplete: (result: String, pageCount: Int) -> Unit) {
         try {
             PDFBoxResourceLoader.init(context)
             val inputStream = context.contentResolver.openInputStream(uri)
             val doc = PDDocument.load(inputStream)
             val stripper = PDFTextStripper()
-            stripper.startPage = 0
-            stripper.endPage = 1
+            stripper.startPage = page
+            stripper.endPage = page
             val result = stripper.getText(doc).replace("\n", " ")
-            onComplete.invoke(result)
+            onComplete.invoke(result, doc.numberOfPages)
             doc.close()
             inputStream?.close()
         } catch (e: IOException) {
