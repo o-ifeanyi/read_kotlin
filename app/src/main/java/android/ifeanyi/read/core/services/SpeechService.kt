@@ -3,14 +3,12 @@ package android.ifeanyi.read.core.services
 import android.content.Context
 import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.LibraryType
-import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
 import android.ifeanyi.read.core.util.Constants
 import android.ifeanyi.read.core.util.TextParser
 import android.net.Uri
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -36,6 +34,8 @@ object SpeechService : ViewModel() {
     private val _state = MutableStateFlow(SpeechState())
     val state = _state.asStateFlow()
 
+    private lateinit var _appContext: Context
+    private lateinit var _updateModel: (fileModel: FileModel) -> Unit
 
     private var _textToSpeech: TextToSpeech? = null
 
@@ -43,10 +43,11 @@ object SpeechService : ViewModel() {
     private var _wordIndex = 0
     private var _textCount: Int = 0
 
-    private var _updateModel: ((fileModel: FileModel) -> Unit)? = null
 
-    fun initTTSVoices(context: Context) {
-        if (_state.value.voices.isNotEmpty()) return
+
+    fun initSpeechService(context: Context, update: (fileModel: FileModel) -> Unit) {
+        _appContext = context
+        _updateModel = update
         var tts: TextToSpeech? = null
         tts = TextToSpeech(
             context
@@ -58,48 +59,44 @@ object SpeechService : ViewModel() {
         }
     }
 
-    fun initUpdateModel(update: (fileModel: FileModel) -> Unit) {
-        _updateModel = update
-    }
-
-    fun updateModel(context: Context, libraryModel: FileModel) = viewModelScope.launch {
-        _state.update { it.copy(model = libraryModel) }
-        when (libraryModel.type) {
+    fun updateModel(fileModel: FileModel) = viewModelScope.launch {
+        _state.update { it.copy(model = fileModel) }
+        when (fileModel.type) {
             LibraryType.Pdf -> {
-                val uri = Uri.parse(libraryModel.path)
-                TextParser.parsePdf(context, uri, libraryModel.currentPage) { result, pageCount ->
-                    _state.update { it.copy(model = libraryModel.copy(totalPages = pageCount)) }
-                    _updateModel?.invoke(_state.value.model!!)
+                val uri = Uri.parse(fileModel.path)
+                TextParser.parsePdf(_appContext, uri, fileModel.currentPage) { result, pageCount ->
+                    _state.update { it.copy(model = fileModel.copy(totalPages = pageCount)) }
+                    _updateModel.invoke(_state.value.model!!)
 
                     stop()
                     _textCount = result.length
                     _words = result.split(" ")
-                    _wordIndex = libraryModel.wordIndex
+                    _wordIndex = fileModel.wordIndex
                     _state.update { it.copy(text = result) }
-                    play(context)
+                    play()
                 }
             }
 
             LibraryType.Img -> {
-                val uri = Uri.parse(libraryModel.path)
-                TextParser.parseImage(context, uri) { result ->
+                val uri = Uri.parse(fileModel.path)
+                TextParser.parseImage(_appContext, uri) { result ->
                     stop()
                     _textCount = result.length
                     _words = result.split(" ")
-                    _wordIndex = libraryModel.wordIndex
+                    _wordIndex = fileModel.wordIndex
                     _state.update { it.copy(text = result) }
-                    play(context)
+                    play()
                 }
             }
 
             LibraryType.Url -> {
-                TextParser.parseUrl(libraryModel.path) { result ->
+                TextParser.parseUrl(fileModel.path) { result ->
                     stop()
                     _textCount = result.length
                     _words = result.split(" ")
-                    _wordIndex = libraryModel.wordIndex
+                    _wordIndex = fileModel.wordIndex
                     _state.update { it.copy(text = result) }
-                    play(context)
+                    play()
                 }
             }
         }
@@ -109,7 +106,7 @@ object SpeechService : ViewModel() {
         _textToSpeech?.stop()
     }
 
-    fun forward(context: Context) {
+    fun forward() {
         _textToSpeech?.stop()
         if (_wordIndex + 10 < _words.size) {
             _wordIndex += 10
@@ -117,10 +114,10 @@ object SpeechService : ViewModel() {
             _wordIndex = _words.size - 3
         }
         updateProgress()
-        play(context)
+        play()
     }
 
-    fun rewind(context: Context) {
+    fun rewind() {
         _textToSpeech?.stop()
         if (_wordIndex - 10 > 0) {
             _wordIndex -= 10
@@ -128,7 +125,7 @@ object SpeechService : ViewModel() {
             _wordIndex = 0
         }
         updateProgress()
-        play(context)
+        play()
     }
 
     private fun stop() {
@@ -137,7 +134,7 @@ object SpeechService : ViewModel() {
         _textToSpeech?.stop()
     }
 
-    fun nextPage(context: Context) {
+    fun nextPage() {
         val model = _state.value.model ?: return
         if (model.currentPage + 1 > model.totalPages) return
         stop()
@@ -150,10 +147,10 @@ object SpeechService : ViewModel() {
                 )
             )
         }
-        updateModel(context, _state.value.model!!)
+        updateModel(_state.value.model!!)
     }
 
-    fun prevPage(context: Context) {
+    fun prevPage() {
         val model = _state.value.model ?: return
         if (model.currentPage - 1 < 1) return
         stop()
@@ -166,12 +163,12 @@ object SpeechService : ViewModel() {
                 )
             )
         }
-        updateModel(context, _state.value.model!!)
+        updateModel(_state.value.model!!)
     }
 
-    fun goToPage(context: Context, page: Int) {
+    fun goToPage(page: Int) {
         val model = _state.value.model ?: return
-        if (page < 0 || page >= model.totalPages) return
+        if (page < 1 || page > model.totalPages) return
         stop()
         _state.update {
             it.copy(
@@ -181,15 +178,15 @@ object SpeechService : ViewModel() {
                 )
             )
         }
-        updateModel(context, _state.value.model!!)
+        updateModel(_state.value.model!!)
     }
 
-    fun play(context: Context) = viewModelScope.launch {
-        val pref = PreferenceService(context = context)
+    fun play() = viewModelScope.launch {
+        val pref = PreferenceService(context = _appContext)
         val voice = pref.getVoice().first()
         val speechRate = pref.getString(Constants.speechRate).first()
         _textToSpeech = TextToSpeech(
-            context
+            _appContext
         ) { res ->
             if (res == TextToSpeech.SUCCESS) {
                 _textToSpeech?.let { speaker ->
@@ -215,9 +212,9 @@ object SpeechService : ViewModel() {
         }
     }
 
-    fun stopAndPlay(context: Context) {
+    fun stopAndPlay() {
         _textToSpeech?.stop()
-        play(context)
+        play()
     }
 
     private fun updateProgress() {
@@ -244,7 +241,7 @@ object SpeechService : ViewModel() {
                         )
                     )
                 }
-                _updateModel?.invoke(_state.value.model!!)
+                _updateModel.invoke(_state.value.model!!)
             }
 
         }
@@ -265,6 +262,7 @@ object SpeechService : ViewModel() {
                 delay(200)
                 NotificationService.showMediaStyleNotification()
             }
+            nextPage()
         }
 
         override fun onRangeStart(

@@ -4,16 +4,19 @@ import android.ifeanyi.read.app.data.LibraryRepository
 import android.ifeanyi.read.app.data.models.FileModel
 import android.ifeanyi.read.app.data.models.FolderModel
 import android.ifeanyi.read.app.presentation.views.library.SortType
+import android.net.Uri
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.UUID
 import javax.inject.Inject
 
@@ -51,6 +54,11 @@ class LibraryViewModel @Inject constructor(private val libraryRepository: Librar
     }
 
     fun deleteItem(file: FileModel) = viewModelScope.launch {
+        val uri = Uri.parse(file.path)
+        val localFile = File(uri.path ?: "")
+        if (localFile.exists()) {
+           localFile.delete()
+        }
         libraryRepository.deleteItem(file)
     }
 
@@ -70,6 +78,15 @@ class LibraryViewModel @Inject constructor(private val libraryRepository: Librar
 
     fun deleteItem(folder: FolderModel) = viewModelScope.launch {
         libraryRepository.deleteItem(folder)
+
+        getFolderFiles(folder.id)
+        delay(500)
+
+        if (_state.value.folderFiles.isNotEmpty()) {
+            for (file in _state.value.folderFiles) {
+                deleteItem(file)
+            }
+        }
     }
 
     fun moveToFolder(id: UUID, files: List<FileModel>) = viewModelScope.launch {

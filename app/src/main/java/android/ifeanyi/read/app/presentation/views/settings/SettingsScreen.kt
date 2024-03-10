@@ -3,7 +3,6 @@ package android.ifeanyi.read.app.presentation.views.settings
 import android.annotation.SuppressLint
 import android.ifeanyi.read.app.presentation.components.SettingsItem
 import android.ifeanyi.read.core.route.Routes
-import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.appVersion
 import android.ifeanyi.read.core.util.mailTo
@@ -22,8 +21,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -43,14 +40,6 @@ fun SettingsScreen(controller: NavHostController) {
     val uriHandler = LocalUriHandler.current
 
     val showWhatsNewSheet = remember { mutableStateOf(false) }
-
-    val state = SpeechService.state.collectAsState().value
-
-    LaunchedEffect(key1 = Unit) {
-        if (state.voices.isEmpty()) {
-            SpeechService.initTTSVoices(context)
-        }
-    }
 
     Scaffold(
         topBar = {

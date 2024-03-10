@@ -22,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -33,7 +32,6 @@ fun EnterUrlSheet(
     showUrlSheet: MutableState<Boolean>,
     libraryVM: LibraryViewModel,
 ) {
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     val url = remember { mutableStateOf("") }
@@ -49,7 +47,7 @@ fun EnterUrlSheet(
         )
 
         coroutineScope.launch {
-            SpeechService.updateModel(context, model)
+            SpeechService.updateModel(model)
             libraryVM.insertItem(model)
             modalSheetState.hide()
         }.invokeOnCompletion {

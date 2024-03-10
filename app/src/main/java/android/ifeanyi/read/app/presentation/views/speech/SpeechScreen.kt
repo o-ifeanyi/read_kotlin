@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,7 +44,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: () -> Unit) {
-    val context = LocalContext.current
     val config = LocalConfiguration.current
     val state = SpeechService.state.collectAsState().value
     val settingState = settingsVM.state.collectAsState().value
@@ -112,7 +110,7 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
                         IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
-                                SpeechService.rewind(context)
+                                SpeechService.rewind()
                             }
                         )
                         {
@@ -126,9 +124,7 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
                         IconButton(
                             modifier = Modifier.size(60.dp),
                             onClick = {
-                                if (state.isPlaying) SpeechService.pause() else SpeechService.play(
-                                    context = context
-                                )
+                                if (state.isPlaying) SpeechService.pause() else SpeechService.play()
                             }
                         ) {
                             Icon(
@@ -141,7 +137,7 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
                         IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
-                                SpeechService.forward(context)
+                                SpeechService.forward()
                             }
                         )
                         {
@@ -174,13 +170,14 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
             VoiceSelectorSheet(
                 showVoicesSheet = showVoicesSheet,
                 modalSheetState = modalSheetState,
+                initial = settingState.voice,
             ) { voice ->
                 coroutineScope.launch {
                     settingsVM.setVoice(voice)
                     modalSheetState.hide()
                 }.invokeOnCompletion {
                     showVoicesSheet.value = false
-                    SpeechService.stopAndPlay(context)
+                    SpeechService.stopAndPlay()
                 }
             }
         }
@@ -196,7 +193,7 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
                     modalSheetState.hide()
                 }.invokeOnCompletion {
                     showRateSheet.value = false
-                    SpeechService.stopAndPlay(context)
+                    SpeechService.stopAndPlay()
                 }
             }
         }
@@ -213,9 +210,9 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
                 detectTapGestures { offset ->
                     val location = offset.x.toDp().value
                     if (location <= config.screenWidthDp * 0.35) {
-                        SpeechService.prevPage(context)
+                        SpeechService.prevPage()
                     } else if (location >= config.screenWidthDp * 0.65) {
-                        SpeechService.nextPage(context)
+                        SpeechService.nextPage()
                     }
                 }
             },

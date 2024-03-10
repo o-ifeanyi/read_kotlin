@@ -4,6 +4,7 @@ import android.ifeanyi.read.app.presentation.components.CustomSliderSheet
 import android.ifeanyi.read.app.presentation.components.SettingsItem
 import android.ifeanyi.read.app.presentation.components.VoiceSelectorSheet
 import android.ifeanyi.read.app.presentation.viewmodel.SettingsViewModel
+import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,12 +49,16 @@ fun TextToSpeechScreen(settingsVM: SettingsViewModel = hiltViewModel()) {
             VoiceSelectorSheet(
                 showVoicesSheet = showVoicesSheet,
                 modalSheetState = modalSheetState,
+                initial = state.voice,
             ) { voice ->
                 coroutineScope.launch {
                     settingsVM.setVoice(voice)
                     modalSheetState.hide()
                 }.invokeOnCompletion {
                     showVoicesSheet.value = false
+                    if (SpeechService.state.value.model != null) {
+                        SpeechService.stopAndPlay()
+                    }
                 }
             }
         }
@@ -69,6 +74,9 @@ fun TextToSpeechScreen(settingsVM: SettingsViewModel = hiltViewModel()) {
                     modalSheetState.hide()
                 }.invokeOnCompletion {
                     showRateSheet.value = false
+                    if (SpeechService.state.value.model != null) {
+                        SpeechService.stopAndPlay()
+                    }
                 }
             }
         }

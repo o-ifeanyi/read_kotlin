@@ -20,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -33,7 +32,6 @@ fun GoToPageSheet(
     showPageSheet: MutableState<Boolean>,
     modalSheetState: SheetState,
 ) {
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     val text = remember { mutableStateOf("") }
@@ -44,7 +42,7 @@ fun GoToPageSheet(
 
         coroutineScope.launch {
             try {
-                SpeechService.goToPage(context, text.value.toInt())
+                SpeechService.goToPage(text.value.toInt())
             } catch (exc: NumberFormatException) {
                 SnackBarService.displayMessage("Enter a valid page number")
             }

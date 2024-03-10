@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.dp
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PlayerComponent(expanded: Boolean, onClick: () -> Unit) {
-    val context = LocalContext.current
     val state = SpeechService.state.collectAsState().value
 
     AnimatedVisibility(
@@ -69,9 +67,7 @@ fun PlayerComponent(expanded: Boolean, onClick: () -> Unit) {
                     IconButton(
                         modifier = Modifier.size(40.dp),
                         onClick = {
-                            if (state.isPlaying) SpeechService.pause() else SpeechService.play(
-                                context = context
-                            )
+                            if (state.isPlaying) SpeechService.pause() else SpeechService.play()
                         },
                     ) {
                         Icon(

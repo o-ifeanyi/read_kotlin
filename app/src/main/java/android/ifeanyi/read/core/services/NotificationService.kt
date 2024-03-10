@@ -20,18 +20,18 @@ const val ACTION_REWIND = "ACTION_REWIND"
 const val CHANNEL_ID = "TTS_NOTIFICATION_CHANNEL"
 
 object NotificationService {
-    private lateinit var appContext: Context
-    private lateinit var session: MediaSessionCompat
+    private lateinit var _appContext: Context
+    private lateinit var _session: MediaSessionCompat
 
     fun init(context: Context) {
-        appContext = context
-        session = MediaSessionCompat(appContext, "MediaSession")
+        _appContext = context
+        _session = MediaSessionCompat(_appContext, "MediaSession")
     }
 
     fun destroy() {
-        val notificationManagerCompat = NotificationManagerCompat.from(appContext)
+        val notificationManagerCompat = NotificationManagerCompat.from(_appContext)
         notificationManagerCompat.cancel(0)
-        session.release()
+        _session.release()
     }
 
     fun showMediaStyleNotification() {
@@ -39,7 +39,7 @@ object NotificationService {
         if (state.model == null) return
 
         if (ActivityCompat.checkSelfPermission(
-                appContext,
+                _appContext,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -51,17 +51,17 @@ object NotificationService {
             override fun onCustomAction(action: String?, extras: Bundle?) {
                 when (action) {
                     ACTION_FORWARD -> {
-                        SpeechService.forward(appContext)
+                        SpeechService.forward()
                     }
 
                     ACTION_REWIND -> {
-                        SpeechService.rewind(appContext)
+                        SpeechService.rewind()
                     }
                 }
             }
 
             override fun onPlay() {
-                SpeechService.play(appContext)
+                SpeechService.play()
             }
 
             override fun onPause() {
@@ -95,19 +95,19 @@ object NotificationService {
             .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 100)
             .build()
 
-        session.setPlaybackState(playbackStateBuilder)
-        session.setCallback(callback)
-        session.setMetadata(metadata)
+        _session.setPlaybackState(playbackStateBuilder)
+        _session.setCallback(callback)
+        _session.setMetadata(metadata)
 
-        val builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(_appContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.round_record_voice_over_24)
-            .setStyle(MediaNotification.MediaStyle().setMediaSession(session.sessionToken))
+            .setStyle(MediaNotification.MediaStyle().setMediaSession(_session.sessionToken))
             .setOngoing(true)
             .setAutoCancel(false)
             .setShowWhen(false)
 
         val notification = builder.build()
-        val notificationManagerCompat = NotificationManagerCompat.from(appContext)
+        val notificationManagerCompat = NotificationManagerCompat.from(_appContext)
 
         createNotificationChannel(notificationManagerCompat)
 

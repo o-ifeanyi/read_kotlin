@@ -65,7 +65,7 @@ fun HomeScreen(
             type = type,
             path = newUri.toString(),
         )
-        SpeechService.updateModel(context, model)
+        SpeechService.updateModel(model)
         libraryVM.insertItem(model)
     }
 
@@ -89,7 +89,7 @@ fun HomeScreen(
 
     LaunchedEffect(key1 = Unit) {
         NotificationService.init(context)
-        SpeechService.initUpdateModel {
+        SpeechService.initSpeechService(context) {
             libraryVM.updateItem(it)
         }
         notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)

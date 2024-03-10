@@ -47,7 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,7 +64,6 @@ fun LibraryScreen(
     val state = libraryVM.state.collectAsState().value
     val settingsState = settingsVM.state.collectAsState().value
 
-    val context = LocalContext.current
     val config = LocalConfiguration.current
     val locale = Locale.getDefault()
 
@@ -85,7 +83,7 @@ fun LibraryScreen(
 
     fun onFileClick(file: FileModel) {
         if (!isSelecting.value) {
-            SpeechService.updateModel(context, file)
+            SpeechService.updateModel(file)
             return
         }
         if (selectedFiles.contains(file)) {
