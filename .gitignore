@@ -13,3 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
+app/src/main/java/android/ifeanyi/read/core/util/Secrets.kt
