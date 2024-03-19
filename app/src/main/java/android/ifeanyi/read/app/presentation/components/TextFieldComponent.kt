@@ -1,7 +1,6 @@
 package android.ifeanyi.read.app.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -16,18 +15,20 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun TextFieldComponent(
     value: MutableState<String>,
+    modifier: Modifier = Modifier,
     onValueChange: ((String) -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
     onImeAction: (() -> Unit)? = null,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
+    maxLines: Int = 1,
+    textLimit: Int? = null,
     keyboardOptions: KeyboardOptions? = null,
     keyboardActions: KeyboardActions? = null,
 ) {
@@ -35,16 +36,16 @@ fun TextFieldComponent(
     val focus = remember { FocusRequester() }
 
     TextField(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(55.dp)
             .focusRequester(focus),
         value = value.value,
         textStyle = MaterialTheme.typography.bodyMedium,
         onValueChange = {
-            value.value = it
+            value.value = it.take(textLimit ?: it.length)
             onValueChange?.invoke(it)
         },
+        supportingText = supportingText,
         keyboardOptions = keyboardOptions ?: KeyboardOptions.Default.copy(
             imeAction = ImeAction.Search
         ),
@@ -66,6 +67,7 @@ fun TextFieldComponent(
         placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
+        maxLines = maxLines,
         shape = MaterialTheme.shapes.medium,
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,

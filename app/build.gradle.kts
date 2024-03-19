@@ -40,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.5"
@@ -83,8 +84,10 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     // GSON
     implementation("com.google.code.gson:gson:2.10.1")
-    // Media Notification
+    // Media notification
     implementation("androidx.media:media:1.7.0")
+    // Mixpanel
+    implementation("com.mixpanel.android:mixpanel-android:7.3.2")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

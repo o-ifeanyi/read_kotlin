@@ -2,7 +2,7 @@ package android.ifeanyi.read.core.route
 
 enum class Routes {
     HomeScreen,
-    HomeTwoScreen,
+    EnterTextScreen,
     LibraryScreen,
     FolderScreen,
     SettingsScreen,

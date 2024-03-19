@@ -89,6 +89,18 @@ object SpeechService : ViewModel() {
                 }
             }
 
+            LibraryType.Txt -> {
+                val uri = Uri.parse(fileModel.path)
+                TextParser.parseText(uri) { result ->
+                    stop()
+                    _textCount = result.length
+                    _words = result.split(" ")
+                    _wordIndex = fileModel.wordIndex
+                    _state.update { it.copy(text = result) }
+                    play()
+                }
+            }
+
             LibraryType.Url -> {
                 TextParser.parseUrl(fileModel.path) { result ->
                     stop()

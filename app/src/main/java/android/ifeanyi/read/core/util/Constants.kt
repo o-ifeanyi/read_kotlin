@@ -5,5 +5,5 @@ object Constants {
     const val displayStyle = "displayStyle"
     const val speechRate = "speechRate"
     const val voice = "voice"
-
+    const val storeLink = "https://play.google.com/store/apps/details?id=android.ifeanyi.read"
 }

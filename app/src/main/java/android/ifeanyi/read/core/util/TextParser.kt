@@ -14,6 +14,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import java.io.BufferedReader
+import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -49,6 +50,15 @@ object TextParser {
                 }
                 .addOnFailureListener { }
 
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun parseText(uri: Uri, onComplete: (result: String) -> Unit) {
+        try {
+            val file = File(uri.path ?: "")
+            onComplete.invoke(file.readText())
         } catch (e: IOException) {
             e.printStackTrace()
         }

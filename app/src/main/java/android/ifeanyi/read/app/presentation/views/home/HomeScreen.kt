@@ -8,7 +8,7 @@ import android.ifeanyi.read.app.presentation.components.ListTileComponent
 import android.ifeanyi.read.app.presentation.viewmodel.LibraryViewModel
 import android.ifeanyi.read.app.presentation.viewmodel.SettingsViewModel
 import android.ifeanyi.read.app.presentation.views.settings.WhatsNewSheet
-import android.ifeanyi.read.core.services.NotificationService
+import android.ifeanyi.read.core.route.Routes
 import android.ifeanyi.read.core.services.SpeechService
 import android.ifeanyi.read.core.theme.AppIcons
 import android.ifeanyi.read.core.util.getName
@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -44,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
+    controller: NavHostController,
     libraryVM: LibraryViewModel = hiltViewModel(),
     settingsVM: SettingsViewModel = hiltViewModel()
 ) {
@@ -88,7 +90,6 @@ fun HomeScreen(
     )
 
     LaunchedEffect(key1 = Unit) {
-        NotificationService.init(context)
         SpeechService.initSpeechService(context) {
             libraryVM.updateItem(it)
         }
@@ -123,7 +124,7 @@ fun HomeScreen(
                         )
                     },
                     title = "Pick document",
-                    subtitle = "SizeTransform defines how the",
+                    subtitle = "Import any PDF from your phone",
                     onClick = { docLauncher.launch(arrayOf("application/pdf")) }
                 )
             }
@@ -139,13 +140,31 @@ fun HomeScreen(
                         )
                     },
                     title = "Pick image",
-                    subtitle = "SizeTransform defines how the",
+                    subtitle = "Listen to the content of any image",
                     onClick = {
                         imageLauncher.launch(
                             PickVisualMediaRequest(
                                 mediaType = ActivityResultContracts.PickVisualMedia.ImageAndVideo
                             )
                         )
+                    }
+                )
+            }
+
+            item {
+                ListTileComponent(
+                    asset = {
+                        Icon(
+                            imageVector = AppIcons.text,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(50.dp)
+                        )
+                    },
+                    title = "Paste or write text",
+                    subtitle = "Listen to the content of the text",
+                    onClick = {
+                        controller.navigate(Routes.EnterTextScreen.name)
                     }
                 )
             }
@@ -161,7 +180,7 @@ fun HomeScreen(
                         )
                     },
                     title = "Paste web link",
-                    subtitle = "SizeTransform defines how the",
+                    subtitle = "Listen to the content of any website",
                     onClick = { showUrlSheet.value = true }
                 )
             }

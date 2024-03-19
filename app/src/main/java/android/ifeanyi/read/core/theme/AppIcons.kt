@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.RecordVoiceOver
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material.icons.rounded.CheckBox
 import androidx.compose.material.icons.rounded.CheckBoxOutlineBlank
 import androidx.compose.material.icons.rounded.FastForward
@@ -34,16 +35,15 @@ import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Speed
-import androidx.compose.material.icons.rounded.Stop
 
 object AppIcons {
     val doc = Icons.AutoMirrored.Outlined.InsertDriveFile
     val image = Icons.Outlined.Image
+    val text = Icons.Outlined.TextFields
     val link = Icons.Rounded.Link
     val speaker = Icons.Outlined.RecordVoiceOver
     val pause = Icons.Rounded.Pause
     val play = Icons.Rounded.PlayArrow
-    val stop = Icons.Rounded.Stop
     val forward = Icons.Rounded.FastForward
     val rewind = Icons.Rounded.FastRewind
     val speechRate = Icons.Rounded.Speed

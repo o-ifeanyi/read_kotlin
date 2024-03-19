@@ -9,7 +9,7 @@ import java.time.Instant
 import java.util.Date
 import java.util.UUID
 
-enum class LibraryType { Pdf, Img, Url }
+enum class LibraryType { Pdf, Img, Txt, Url }
 
 @Entity(tableName = "file_table")
 data class FileModel(
@@ -40,6 +40,7 @@ data class FileModel(
          return when (type) {
             LibraryType.Pdf -> AppIcons.doc
             LibraryType.Img -> AppIcons.image
+             LibraryType.Txt -> AppIcons.text
             LibraryType.Url -> AppIcons.link
         }
     }

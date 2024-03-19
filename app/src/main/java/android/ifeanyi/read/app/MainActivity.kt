@@ -4,8 +4,10 @@ import android.ifeanyi.read.app.presentation.components.BottomNavigationBarCompo
 import android.ifeanyi.read.app.presentation.components.PlayerComponent
 import android.ifeanyi.read.app.presentation.views.speech.SpeechScreen
 import android.ifeanyi.read.core.route.Router
+import android.ifeanyi.read.core.services.AnalyticService
 import android.ifeanyi.read.core.services.NotificationService
 import android.ifeanyi.read.core.services.SnackBarService
+import android.ifeanyi.read.core.services.SpeechService
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -45,6 +47,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AnalyticService.init(this)
+        NotificationService.init(this)
+
         setContent {
             ReadTheme {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
