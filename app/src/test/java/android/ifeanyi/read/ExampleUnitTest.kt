@@ -1,4 +1,4 @@
-package android.ifeanyi.read
+package com.ifeanyi.read
 
 import org.junit.Test
 

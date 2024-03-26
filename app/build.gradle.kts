@@ -6,15 +6,23 @@ plugins {
 }
 
 android {
-    namespace = "android.ifeanyi.read"
+    signingConfigs {
+        create("release") {
+            storeFile = file("/Users/ifeanyionuoha/read_keystore.jks")
+            storePassword = "readkeystore"
+            keyPassword = "readkeystore"
+            keyAlias = "release"
+        }
+    }
+    namespace = "com.ifeanyi.read"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "android.ifeanyi.read"
+        applicationId = "com.ifeanyi.read"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -29,6 +37,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
