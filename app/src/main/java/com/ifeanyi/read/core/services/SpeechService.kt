@@ -59,60 +59,105 @@ object SpeechService : ViewModel() {
         }
     }
 
-    fun updateModel(fileModel: FileModel) = viewModelScope.launch {
+    fun updateModel(fileModel: FileModel, callBack: ((fileModel: FileModel) -> Unit)? = null) = viewModelScope.launch {
         _state.update { it.copy(model = fileModel) }
         when (fileModel.type) {
             LibraryType.Pdf -> {
                 val uri = Uri.parse(fileModel.path)
-                TextParser.parsePdf(_appContext, uri, fileModel.currentPage) { result, pageCount ->
-                    _state.update { it.copy(model = fileModel.copy(totalPages = pageCount)) }
-                    _updateModel.invoke(_state.value.model!!)
-
+                TextParser.parsePdf(_appContext, uri, fileModel.currentPage) { result, pageCount, exc ->
                     stop()
                     _textCount = result.length
                     _words = result.split(" ")
                     _wordIndex = fileModel.wordIndex
                     _state.update { it.copy(text = result) }
                     play()
-                    AnalyticService.track("play_doc")
+
+                    if (exc == null) {
+                        _state.update { it.copy(model = fileModel.copy(totalPages = pageCount)) }
+                        callBack?.invoke(fileModel)
+                        _updateModel.invoke(_state.value.model!!)
+                        AnalyticService.track("play_doc")
+                    }
                 }
             }
 
             LibraryType.Img -> {
-                val uri = Uri.parse(fileModel.path)
-                TextParser.parseImage(_appContext, uri) { result ->
+                if (fileModel.readCache() != null) {
+                    val result = fileModel.readCache()!!
                     stop()
                     _textCount = result.length
                     _words = result.split(" ")
                     _wordIndex = fileModel.wordIndex
                     _state.update { it.copy(text = result) }
                     play()
-                    AnalyticService.track("play_image")
+                    AnalyticService.track("play_image_cache")
+                } else {
+                    AppStateService.displayLoader()
+                    val uri = Uri.parse(fileModel.path)
+                    TextParser.parseImage(_appContext, uri) { result, generated, exc ->
+                        stop()
+                        _textCount = result.length
+                        _words = result.split(" ")
+                        _wordIndex = fileModel.wordIndex
+                        _state.update { it.copy(text = result) }
+                        play()
+
+                        if (exc == null) {
+                            if (generated == true) {
+                                fileModel.writeCache(_appContext, result)
+                            }
+                            callBack?.invoke(fileModel)
+                            AnalyticService.track("play_image")
+                        }
+                        AppStateService.removeLoader()
+                    }
                 }
             }
 
             LibraryType.Txt -> {
                 val uri = Uri.parse(fileModel.path)
-                TextParser.parseText(uri) { result ->
+                TextParser.parseText(uri) { result, exc ->
                     stop()
                     _textCount = result.length
                     _words = result.split(" ")
                     _wordIndex = fileModel.wordIndex
                     _state.update { it.copy(text = result) }
                     play()
-                    AnalyticService.track("play_text")
+
+                    if (exc == null) {
+                        callBack?.invoke(fileModel)
+                        AnalyticService.track("play_text")
+                    }
                 }
             }
 
             LibraryType.Url -> {
-                TextParser.parseUrl(fileModel.path) { result ->
+                if (fileModel.readCache() != null) {
+                    val result = fileModel.readCache()!!
                     stop()
                     _textCount = result.length
                     _words = result.split(" ")
                     _wordIndex = fileModel.wordIndex
                     _state.update { it.copy(text = result) }
                     play()
-                    AnalyticService.track("play_url")
+                    AnalyticService.track("play_url_cache")
+                } else {
+                    AppStateService.displayLoader()
+                    TextParser.parseUrl(fileModel.path) { result, exc ->
+                        stop()
+                        _textCount = result.length
+                        _words = result.split(" ")
+                        _wordIndex = fileModel.wordIndex
+                        _state.update { it.copy(text = result) }
+                        play()
+
+                        if (exc == null) {
+                            fileModel.writeCache(_appContext, result)
+                            callBack?.invoke(fileModel)
+                            AnalyticService.track("play_url")
+                        }
+                        AppStateService.removeLoader()
+                    }
                 }
             }
         }
@@ -144,10 +189,14 @@ object SpeechService : ViewModel() {
         play()
     }
 
-    private fun stop() {
+    fun stop(reset: Boolean = false) {
         _wordIndex = 0
         _state.update { it.copy(wordRange = IntRange(0, 0), progress = 0f) }
         _textToSpeech?.stop()
+
+        if (reset) {
+            _state.update { it.copy(text = "", model = null) }
+        }
     }
 
     fun nextPage() {
@@ -288,9 +337,11 @@ object SpeechService : ViewModel() {
             frame: Int
         ) {
 
-            if (_wordIndex < _words.size) {
-                updateProgress()
-            }
+            try {
+                if (_wordIndex < _words.size) {
+                    updateProgress()
+                }
+            } catch (_: Exception) {}
         }
 
         override fun onStop(utteranceId: String?, interrupted: Boolean) {

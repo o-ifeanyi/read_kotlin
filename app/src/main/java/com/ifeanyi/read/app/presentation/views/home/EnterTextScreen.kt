@@ -93,9 +93,9 @@ fun EnterTextScreen(
                         type = LibraryType.Txt,
                         path = newUri.toString(),
                     )
-                    SpeechService.updateModel(model)
-                    libraryVM.insertItem(model)
-
+                    SpeechService.updateModel(model) {
+                        libraryVM.insertItem(it)
+                    }
                     controller.popBackStack()
                 }
             }

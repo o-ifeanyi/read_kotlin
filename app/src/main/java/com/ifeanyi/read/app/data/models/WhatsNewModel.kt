@@ -19,12 +19,12 @@ data class NewFeature(
 )
 
 val latestUpdate = WhatsNewModel(
-    id = "1.0.0",
+    id = "1.0.2",
     features = listOf(
-        NewFeature(id = 0, title = "Welcome to Read", body = "A powerful text to speech app"),
-        NewFeature(id = 1, title = "PDF to text", body = "Listen to the content of a PDF"),
-        NewFeature(id = 2, title = "Image to text", body = "Listen to the content of an image"),
-        NewFeature(id = 3, title = "Paste/write text", body = "Listen to the content of the text"),
-        NewFeature(id = 4, title = "Web to text", body = "Listen to the content of a website")
+        NewFeature(
+            id = 0,
+            title = "Introducing Generative AI ✨",
+            body = "You now get an AI description of images that have no extractable text"
+        ),
     )
 )

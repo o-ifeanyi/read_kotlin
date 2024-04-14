@@ -5,7 +5,7 @@ import com.ifeanyi.read.app.presentation.components.PlayerComponent
 import com.ifeanyi.read.app.presentation.views.speech.SpeechScreen
 import com.ifeanyi.read.core.route.Router
 import com.ifeanyi.read.core.services.AnalyticService
-import com.ifeanyi.read.core.services.SnackBarService
+import com.ifeanyi.read.core.services.AppStateService
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.ifeanyi.read.app.presentation.components.LoaderComponent
 import com.ifeanyi.read.core.services.notificationService
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -69,7 +70,9 @@ class MainActivity : ComponentActivity() {
                             targetState = expanded,
                             label = "Animated Player",
                             transitionSpec = {
-                                slideInVertically(animationSpec = tween(300), initialOffsetY = {0}) togetherWith
+                                slideInVertically(
+                                    animationSpec = tween(300),
+                                    initialOffsetY = { 0 }) togetherWith
                                         slideOutVertically(animationSpec = tween(300))
                             }
                         ) { isExpanded ->
@@ -83,17 +86,28 @@ class MainActivity : ComponentActivity() {
                         BottomNavigationBarComponent(controller, currentDestination)
                     }
 
-                    val state = SnackBarService.state.collectAsState().value
+                    val snackBar = AppStateService.snackBar.collectAsState().value
 
                     AnimatedVisibility(
                         modifier = Modifier.align(Alignment.TopCenter),
-                        visible = state.hasMessage,
+                        visible = snackBar.hasMessage,
                         enter = fadeIn(),
                         exit = fadeOut(),
                     ) {
                         Snackbar(modifier = Modifier.padding(15.dp)) {
-                            Text(text = state.message)
+                            Text(text = snackBar.message)
                         }
+                    }
+
+                    val loader = AppStateService.loader.collectAsState().value
+
+                    AnimatedVisibility(
+                        modifier = Modifier.align(Alignment.Center),
+                        visible = loader.isLoading,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        LoaderComponent(text = loader.message)
                     }
                 }
             }

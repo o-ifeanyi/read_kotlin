@@ -13,7 +13,7 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [FileModel::class, FolderModel::class, WhatsNewModel::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(RoomConverters::class)

@@ -48,8 +48,9 @@ fun EnterUrlSheet(
         )
         AnalyticService.track("enter_url")
         coroutineScope.launch {
-            SpeechService.updateModel(model)
-            libraryVM.insertItem(model)
+            SpeechService.updateModel(model) {
+                libraryVM.insertItem(it)
+            }
             modalSheetState.hide()
         }.invokeOnCompletion {
             showUrlSheet.value = false

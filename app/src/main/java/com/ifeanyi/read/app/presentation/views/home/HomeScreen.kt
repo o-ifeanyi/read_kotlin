@@ -68,8 +68,9 @@ fun HomeScreen(
             type = type,
             path = newUri.toString(),
         )
-        SpeechService.updateModel(model)
-        libraryVM.insertItem(model)
+        SpeechService.updateModel(model) {
+            libraryVM.insertItem(it)
+        }
     }
 
     val docLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {

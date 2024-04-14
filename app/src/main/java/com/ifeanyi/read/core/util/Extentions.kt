@@ -58,15 +58,21 @@ fun Uri.getName(context: Context): String {
 }
 
 val String.trimUrl: String
-get(){
-    return try {
-        val host = URI(this).host
-        val domain = if (host.startsWith("www.")) host.substring(4) else host
-        return domain.split(".").first()
-    } catch (ex: Exception) {
-        ""
+    get() {
+        return try {
+            val host = URI(this).host
+            val domain = if (host.startsWith("www.")) host.substring(4) else host
+            return domain.split(".").first()
+        } catch (ex: Exception) {
+            ""
+        }
     }
-}
+
+val String.formatted: String
+    get() {
+        val first = this.replace(Regex("[*]"), "")
+        return first.replace(Regex("[\\s+]"), " ")
+    }
 
 fun Date.dwdm(locale: Locale): String {
     return SimpleDateFormat("E, d MMM", locale).format(this)

@@ -21,8 +21,8 @@ android {
         applicationId = "com.ifeanyi.read"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -76,17 +76,17 @@ dependencies {
     // URL to text
     implementation("org.jsoup:jsoup:1.14.3")
     // Font
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.4")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.5")
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     // Hilt
     implementation("com.google.dagger:hilt-android:2.49")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     // Material icons
-    implementation("androidx.compose.material:material-icons-extended:1.6.4")
+    implementation("androidx.compose.material:material-icons-extended:1.6.5")
     // Fix PendingIntent crash
     implementation("androidx.work:work-runtime:2.9.0")
     // DataStore
@@ -96,7 +96,9 @@ dependencies {
     // Media notification
     implementation("androidx.media:media:1.7.0")
     // Mixpanel
-    implementation("com.mixpanel.android:mixpanel-android:7.3.2")
+    implementation("com.mixpanel.android:mixpanel-android:7.5.0")
+    // Gemini
+    implementation("com.google.ai.client.generativeai:generativeai:0.3.0")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

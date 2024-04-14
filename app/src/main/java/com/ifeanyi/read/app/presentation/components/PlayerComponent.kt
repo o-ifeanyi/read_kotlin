@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
@@ -64,6 +65,18 @@ fun PlayerComponent(expanded: Boolean, onClick: () -> Unit) {
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        modifier = Modifier.size(35.dp),
+                        onClick = { SpeechService.stop(true) },
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(35.dp),
+                            imageVector = AppIcons.stop,
+                            contentDescription = "Play/Pause Button",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
                     IconButton(
                         modifier = Modifier.size(40.dp),
                         onClick = {

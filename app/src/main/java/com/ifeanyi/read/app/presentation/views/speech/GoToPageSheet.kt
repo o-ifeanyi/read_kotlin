@@ -2,7 +2,7 @@ package com.ifeanyi.read.app.presentation.views.speech
 
 import com.ifeanyi.read.app.presentation.components.AppButton
 import com.ifeanyi.read.app.presentation.components.TextFieldComponent
-import com.ifeanyi.read.core.services.SnackBarService
+import com.ifeanyi.read.core.services.AppStateService
 import com.ifeanyi.read.core.services.SpeechService
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,7 +44,7 @@ fun GoToPageSheet(
             try {
                 SpeechService.goToPage(text.value.toInt())
             } catch (exc: NumberFormatException) {
-                SnackBarService.displayMessage("Enter a valid page number")
+                AppStateService.displayMessage("Enter a valid page number")
             }
             modalSheetState.hide()
         }.invokeOnCompletion {

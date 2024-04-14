@@ -35,6 +35,7 @@ import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Speed
+import androidx.compose.material.icons.rounded.Stop
 
 object AppIcons {
     val doc = Icons.AutoMirrored.Outlined.InsertDriveFile
@@ -43,6 +44,7 @@ object AppIcons {
     val link = Icons.Rounded.Link
     val speaker = Icons.Outlined.RecordVoiceOver
     val pause = Icons.Rounded.Pause
+    val stop = Icons.Rounded.Stop
     val play = Icons.Rounded.PlayArrow
     val forward = Icons.Rounded.FastForward
     val rewind = Icons.Rounded.FastRewind

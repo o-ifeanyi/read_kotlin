@@ -9,13 +9,24 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class SnackBarState(val hasMessage: Boolean = false, val message: String = "")
-object SnackBarService: ViewModel() {
-    private val _state = MutableStateFlow(SnackBarState())
-    val state = _state.asStateFlow()
+data class LoadingState(val isLoading: Boolean = false, val message: String = "")
+object AppStateService: ViewModel() {
+    private val _snackBar = MutableStateFlow(SnackBarState())
+    private val _loader = MutableStateFlow(LoadingState())
+    val snackBar = _snackBar.asStateFlow()
+    val loader = _loader.asStateFlow()
 
     fun displayMessage(message: String) = viewModelScope.launch {
-        _state.update { it.copy(hasMessage = true, message = message) }
+        _snackBar.update { it.copy(hasMessage = true, message = message) }
         delay(4000L)
-        _state.update { it.copy(hasMessage = false, message = "") }
+        _snackBar.update { it.copy(hasMessage = false, message = "") }
+    }
+
+    fun displayLoader(message: String = "loading ...") = viewModelScope.launch {
+        _loader.update { it.copy(isLoading = true, message = message) }
+    }
+
+    fun removeLoader() = viewModelScope.launch {
+        _loader.update { it.copy(isLoading = false, message = "") }
     }
 }
