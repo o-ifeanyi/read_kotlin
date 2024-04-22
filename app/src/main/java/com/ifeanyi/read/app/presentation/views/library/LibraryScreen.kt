@@ -47,7 +47,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -200,6 +202,37 @@ fun LibraryScreen(
                 contentPadding = PaddingValues(bottom = 200.dp),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
+                if (folders.isEmpty() && files.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .height((config.screenHeightDp * 0.7).dp)
+                                .fillMaxWidth(), contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(5.dp)
+                            ) {
+                                Icon(
+                                    imageVector = AppIcons.folder,
+                                    contentDescription = "Folder",
+                                    modifier = Modifier.size(60.dp)
+                                )
+                                Text(
+                                    text = "Nothing to see yet",
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    text = "Items you previously listened to will show up here",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                }
                 if (folders.isNotEmpty()) {
                     when (settingsState.displayStyle) {
                         DisplayStyle.Grid -> {
@@ -270,7 +303,11 @@ fun LibraryScreen(
                                             )
                                         },
                                         title = folder.name,
-                                        subtitle = "${counts[folder.id]?.intValue ?: 0} items • ${folder.date.dwdm(locale)}",
+                                        subtitle = "${counts[folder.id]?.intValue ?: 0} items • ${
+                                            folder.date.dwdm(
+                                                locale
+                                            )
+                                        }",
                                         onClick = { onFolderClick(folder) },
                                         onLongPress = {
                                             if (isSelecting.value) return@ListTileComponent
