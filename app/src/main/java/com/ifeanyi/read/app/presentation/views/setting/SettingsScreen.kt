@@ -5,14 +5,11 @@ import com.ifeanyi.read.app.presentation.components.SettingsItem
 import com.ifeanyi.read.core.route.Routes
 import com.ifeanyi.read.core.theme.AppIcons
 import com.ifeanyi.read.core.util.Constants
-import com.ifeanyi.read.core.util.appVersion
 import com.ifeanyi.read.core.util.mailTo
 import com.ifeanyi.read.core.util.share
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
@@ -132,18 +128,6 @@ fun SettingsScreen(controller: NavHostController) {
                             controller.navigate(Routes.AboutAppScreen.name)
                         }
                     }
-                }
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "VER $appVersion",
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall
-                    )
                 }
             }
         }

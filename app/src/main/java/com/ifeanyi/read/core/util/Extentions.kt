@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
-import androidx.core.content.ContextCompat
 import com.ifeanyi.read.BuildConfig
 import java.net.URI
 import java.text.SimpleDateFormat
@@ -34,17 +33,20 @@ fun Context.share(text: String) {
         putExtra(Intent.EXTRA_TEXT, text)
     }
     val shareIntent = Intent.createChooser(sendIntent, null)
-    ContextCompat.startActivity(this, shareIntent, null)
+    this.startActivity(shareIntent, null)
 }
 
 fun Context.mailTo(to: String, subject: String) {
+    val selectorIntent = Intent(Intent.ACTION_SENDTO)
+    selectorIntent.setData(Uri.parse("mailto:"))
+
     val sendIntent = Intent(Intent.ACTION_SEND).apply {
-        type = "vnd.android.cursor.item/email"
         putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
         putExtra(Intent.EXTRA_SUBJECT, subject)
+        selector = selectorIntent
     }
     val shareIntent = Intent.createChooser(sendIntent, null)
-    ContextCompat.startActivity(this, shareIntent, null)
+    this.startActivity(shareIntent)
 }
 
 fun Uri.getName(context: Context): String {
