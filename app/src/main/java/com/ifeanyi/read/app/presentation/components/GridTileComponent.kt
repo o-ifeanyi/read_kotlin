@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -42,7 +43,7 @@ fun GridTileComponent(
         tonalElevation = tonalElevation,
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 15.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 15.dp).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {

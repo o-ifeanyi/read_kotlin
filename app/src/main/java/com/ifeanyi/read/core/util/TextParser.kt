@@ -7,6 +7,7 @@ import com.google.ai.client.generativeai.type.content
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.ifeanyi.read.BuildConfig
 import com.ifeanyi.read.core.services.AnalyticService
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import com.tom_roush.pdfbox.pdmodel.PDDocument
@@ -59,7 +60,7 @@ object TextParser {
                                 AnalyticService.track("describe_image")
                                 val generativeModel = GenerativeModel(
                                     modelName = "gemini-pro-vision",
-                                    apiKey = Secrets.geminiKey
+                                    apiKey = BuildConfig.GEMINI_KEY
                                 )
 
                                 val inputContent = content {
