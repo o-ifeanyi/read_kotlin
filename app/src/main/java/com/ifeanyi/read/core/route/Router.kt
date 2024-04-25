@@ -18,7 +18,12 @@ import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun Router(controller: NavHostController) {
+fun Router(
+    controller: NavHostController,
+    onIconChangeRed: () -> Unit,
+    onIconChangePurple: () -> Unit,
+    onIconChangeWhite: () -> Unit
+) {
 
     NavHost(navController = controller, startDestination = Routes.HomeScreen.name) {
         composable(Routes.HomeScreen.name) {
@@ -46,14 +51,18 @@ fun Router(controller: NavHostController) {
             TextToSpeechScreen()
         }
         composable(Routes.AppearanceScreen.name) {
-            AppearanceScreen()
+            AppearanceScreen(
+                onIconChangeRed = onIconChangeRed,
+                onIconChangePurple = onIconChangePurple,
+                onIconChangeWhite = onIconChangeWhite
+            )
         }
     }
 }
 
 val NavHostController.parentRoute: Routes
     get() = this.currentBackStackEntry.let {
-        val route = it?.destination?.route?.split("/")?.first()?: Routes.HomeScreen.name
+        val route = it?.destination?.route?.split("/")?.first() ?: Routes.HomeScreen.name
 
         val parentRoute = when (Routes.valueOf(route)) {
             Routes.HomeScreen -> Routes.HomeScreen

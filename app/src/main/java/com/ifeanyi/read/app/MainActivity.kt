@@ -37,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ifeanyi.read.app.presentation.components.LoaderComponent
+import com.ifeanyi.read.core.enums.ActivityType
 import com.ifeanyi.read.core.services.notificationService
+import com.ifeanyi.read.core.util.changeIcon
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -54,6 +56,8 @@ class MainActivity : ComponentActivity() {
         AnalyticService.init(this)
         notificationService.init(this)
 
+
+
         setContent {
             ReadTheme {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -63,7 +67,12 @@ class MainActivity : ComponentActivity() {
 
                     var expanded by remember { mutableStateOf(false) }
 
-                    Router(controller = controller)
+                    Router(
+                        controller = controller,
+                        onIconChangeRed = { this@MainActivity.changeIcon(ActivityType.MainActivity) },
+                        onIconChangePurple = { this@MainActivity.changeIcon(ActivityType.MainActivityPurple) },
+                        onIconChangeWhite = { this@MainActivity.changeIcon(ActivityType.MainActivityWhite) }
+                    )
 
                     Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                         AnimatedContent(

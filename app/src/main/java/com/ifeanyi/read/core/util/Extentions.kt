@@ -1,10 +1,14 @@
 package com.ifeanyi.read.core.util
 
+import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.OpenableColumns
 import com.ifeanyi.read.BuildConfig
+import com.ifeanyi.read.core.enums.ActivityType
 import java.net.URI
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -78,4 +82,18 @@ val String.formatted: String
 
 fun Date.dwdm(locale: Locale): String {
     return SimpleDateFormat("E, d MMM", locale).format(this)
+}
+
+fun Activity.changeIcon(activityType: ActivityType) {
+    ActivityType.entries.forEach {
+        packageManager.setComponentEnabledSetting(
+            ComponentName(
+                this,
+                "$packageName.app.${it.name}"
+            ),
+            if (it == activityType) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
+    }
 }
