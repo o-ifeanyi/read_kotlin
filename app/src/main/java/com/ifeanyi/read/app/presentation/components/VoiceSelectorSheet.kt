@@ -59,7 +59,7 @@ fun VoiceSelectorSheet(
                                 ) else null
                             },
                             tonalElevation = 2.dp,
-                            subtitle = voice.locale.displayCountry,
+                            subtitle = voice.locale.displayName,
                             onClick = { onDone.invoke(voice) },
                         )
                         if (voice.name == initial?.name) {

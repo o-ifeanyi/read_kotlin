@@ -72,7 +72,10 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
                         TextButton(onClick = {
                             showPageSheet.value = true
                         }) {
-                            Text(text = "Page ${model.currentPage} of ${model.totalPages}", fontWeight = FontWeight.SemiBold)
+                            Text(
+                                text = "Page ${model.currentPage} of ${model.totalPages}",
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
                     }
                 }
@@ -81,7 +84,10 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
         bottomBar = {
             Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = 2.dp) {
                 Column(
-                    modifier = Modifier.padding(20.dp),
+                    modifier = Modifier.padding(
+                        20.dp, 20.dp, 20.dp,
+                        bottom = 30.dp
+                    ),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     LinearProgressIndicator(
@@ -206,16 +212,18 @@ fun SpeechScreen(settingsVM: SettingsViewModel = hiltViewModel(), onCollapse: ()
         }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize().pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    val location = offset.x.toDp().value
-                    if (location <= config.screenWidthDp * 0.35) {
-                        SpeechService.prevPage()
-                    } else if (location >= config.screenWidthDp * 0.65) {
-                        SpeechService.nextPage()
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures { offset ->
+                        val location = offset.x.toDp().value
+                        if (location <= config.screenWidthDp * 0.35) {
+                            SpeechService.prevPage()
+                        } else if (location >= config.screenWidthDp * 0.65) {
+                            SpeechService.nextPage()
+                        }
                     }
-                }
-            },
+                },
             contentPadding = PaddingValues(
                 top = padding.calculateTopPadding(),
                 start = 20.dp, end = 20.dp,

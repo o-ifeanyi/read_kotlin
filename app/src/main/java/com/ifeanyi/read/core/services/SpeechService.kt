@@ -11,6 +11,8 @@ import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ifeanyi.read.BuildConfig
+import com.ifeanyi.read.core.util.flagEmoji
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,7 +46,6 @@ object SpeechService : ViewModel() {
     private var _textCount: Int = 0
 
 
-
     fun initSpeechService(context: Context, update: (fileModel: FileModel) -> Unit) {
         _appContext = context
         _updateModel = update
@@ -53,48 +54,27 @@ object SpeechService : ViewModel() {
             context
         ) { res ->
             if (res == TextToSpeech.SUCCESS) {
-                _state.update { it.copy(voices = tts!!.voices.toList()) }
+                _state.update {
+                    it.copy(voices = tts!!.voices.toList().filter { voice ->
+                        voice.locale.flagEmoji != null || voice.locale.displayCountry.isNotEmpty()
+                    })
+                }
                 tts!!.shutdown()
             }
         }
     }
 
-    fun updateModel(fileModel: FileModel, callBack: ((fileModel: FileModel) -> Unit)? = null) = viewModelScope.launch {
-        _state.update { it.copy(model = fileModel) }
-        when (fileModel.type) {
-            LibraryType.Pdf -> {
-                val uri = Uri.parse(fileModel.path)
-                TextParser.parsePdf(_appContext, uri, fileModel.currentPage) { result, pageCount, exc ->
-                    stop()
-                    _textCount = result.length
-                    _words = result.split(" ")
-                    _wordIndex = fileModel.wordIndex
-                    _state.update { it.copy(text = result) }
-                    play()
-
-                    if (exc == null) {
-                        _state.update { it.copy(model = fileModel.copy(totalPages = pageCount)) }
-                        callBack?.invoke(fileModel)
-                        _updateModel.invoke(_state.value.model!!)
-                        AnalyticService.track("play_doc")
-                    }
-                }
-            }
-
-            LibraryType.Img -> {
-                if (fileModel.readCache() != null) {
-                    val result = fileModel.readCache()!!
-                    stop()
-                    _textCount = result.length
-                    _words = result.split(" ")
-                    _wordIndex = fileModel.wordIndex
-                    _state.update { it.copy(text = result) }
-                    play()
-                    AnalyticService.track("play_image_cache")
-                } else {
-                    AppStateService.displayLoader()
+    fun updateModel(fileModel: FileModel, callBack: ((fileModel: FileModel) -> Unit)? = null) =
+        viewModelScope.launch {
+            _state.update { it.copy(model = fileModel) }
+            when (fileModel.type) {
+                LibraryType.Pdf -> {
                     val uri = Uri.parse(fileModel.path)
-                    TextParser.parseImage(_appContext, uri) { result, generated, exc ->
+                    TextParser.parsePdf(
+                        _appContext,
+                        uri,
+                        fileModel.currentPage
+                    ) { result, pageCount, exc ->
                         stop()
                         _textCount = result.length
                         _words = result.split(" ")
@@ -103,47 +83,50 @@ object SpeechService : ViewModel() {
                         play()
 
                         if (exc == null) {
-                            if (generated == true) {
-                                fileModel.writeCache(_appContext, result)
+                            _state.update { it.copy(model = fileModel.copy(totalPages = pageCount)) }
+                            callBack?.invoke(fileModel)
+                            _updateModel.invoke(_state.value.model!!)
+                            AnalyticService.track("play_doc")
+                        }
+                    }
+                }
+
+                LibraryType.Img -> {
+                    if (fileModel.readCache() != null) {
+                        val result = fileModel.readCache()!!
+                        stop()
+                        _textCount = result.length
+                        _words = result.split(" ")
+                        _wordIndex = fileModel.wordIndex
+                        _state.update { it.copy(text = result) }
+                        play()
+                        AnalyticService.track("play_image_cache")
+                    } else {
+                        AppStateService.displayLoader()
+                        val uri = Uri.parse(fileModel.path)
+                        TextParser.parseImage(_appContext, uri) { result, generated, exc ->
+                            stop()
+                            _textCount = result.length
+                            _words = result.split(" ")
+                            _wordIndex = fileModel.wordIndex
+                            _state.update { it.copy(text = result) }
+                            play()
+
+                            if (exc == null) {
+                                if (generated == true) {
+                                    fileModel.writeCache(_appContext, result)
+                                }
+                                callBack?.invoke(fileModel)
+                                AnalyticService.track("play_image")
                             }
-                            callBack?.invoke(fileModel)
-                            AnalyticService.track("play_image")
+                            AppStateService.removeLoader()
                         }
-                        AppStateService.removeLoader()
                     }
                 }
-            }
 
-            LibraryType.Txt -> {
-                val uri = Uri.parse(fileModel.path)
-                TextParser.parseText(uri) { result, exc ->
-                    stop()
-                    _textCount = result.length
-                    _words = result.split(" ")
-                    _wordIndex = fileModel.wordIndex
-                    _state.update { it.copy(text = result) }
-                    play()
-
-                    if (exc == null) {
-                        callBack?.invoke(fileModel)
-                        AnalyticService.track("play_text")
-                    }
-                }
-            }
-
-            LibraryType.Url -> {
-                if (fileModel.readCache() != null) {
-                    val result = fileModel.readCache()!!
-                    stop()
-                    _textCount = result.length
-                    _words = result.split(" ")
-                    _wordIndex = fileModel.wordIndex
-                    _state.update { it.copy(text = result) }
-                    play()
-                    AnalyticService.track("play_url_cache")
-                } else {
-                    AppStateService.displayLoader()
-                    TextParser.parseUrl(fileModel.path) { result, exc ->
+                LibraryType.Txt -> {
+                    val uri = Uri.parse(fileModel.path)
+                    TextParser.parseText(uri) { result, exc ->
                         stop()
                         _textCount = result.length
                         _words = result.split(" ")
@@ -152,16 +135,43 @@ object SpeechService : ViewModel() {
                         play()
 
                         if (exc == null) {
-                            fileModel.writeCache(_appContext, result)
                             callBack?.invoke(fileModel)
-                            AnalyticService.track("play_url")
+                            AnalyticService.track("play_text")
                         }
-                        AppStateService.removeLoader()
+                    }
+                }
+
+                LibraryType.Url -> {
+                    if (fileModel.readCache() != null) {
+                        val result = fileModel.readCache()!!
+                        stop()
+                        _textCount = result.length
+                        _words = result.split(" ")
+                        _wordIndex = fileModel.wordIndex
+                        _state.update { it.copy(text = result) }
+                        play()
+                        AnalyticService.track("play_url_cache")
+                    } else {
+                        AppStateService.displayLoader()
+                        TextParser.parseUrl(fileModel.path) { result, exc ->
+                            stop()
+                            _textCount = result.length
+                            _words = result.split(" ")
+                            _wordIndex = fileModel.wordIndex
+                            _state.update { it.copy(text = result) }
+                            play()
+
+                            if (exc == null) {
+                                fileModel.writeCache(_appContext, result)
+                                callBack?.invoke(fileModel)
+                                AnalyticService.track("play_url")
+                            }
+                            AppStateService.removeLoader()
+                        }
                     }
                 }
             }
         }
-    }
 
     fun pause() {
         _textToSpeech?.stop()
@@ -283,32 +293,36 @@ object SpeechService : ViewModel() {
     }
 
     private fun updateProgress() {
-        val utterance = _words[_wordIndex]
+        try {
+            val utterance = _words[_wordIndex]
 
-        val regex = utterance.toRegex()
-        val spoken = _words.take(_wordIndex).joinToString(" ").length
-        val matchResult = regex.find(input = state.value.text, startIndex = spoken)
+            val regex = utterance.toRegex()
+            val spoken = _words.take(_wordIndex).joinToString(" ").length
+            val matchResult = regex.find(input = state.value.text, startIndex = spoken)
 
-        _wordIndex++
-        matchResult?.let { match ->
-            if (match.range.last > match.range.first) {
-                val progress = match.range.last / _textCount.toFloat()
-                val range = IntRange(match.range.first, match.range.last + 1)
-                _state.update { it.copy(wordRange = range, progress = progress) }
+            _wordIndex++
+            matchResult?.let { match ->
+                if (match.range.last > match.range.first) {
+                    val progress = match.range.last / _textCount.toFloat()
+                    val range = IntRange(match.range.first, match.range.last + 1)
+                    _state.update { it.copy(wordRange = range, progress = progress) }
 
-                val model = _state.value.model ?: return
-                _state.update {
-                    it.copy(
-                        model = model.copy(
-                            progress = (progress * 100).toInt(),
-                            wordRange = range,
-                            wordIndex = _wordIndex - 1,
+                    val model = _state.value.model ?: return
+                    _state.update {
+                        it.copy(
+                            model = model.copy(
+                                progress = (progress * 100).toInt(),
+                                wordRange = range,
+                                wordIndex = _wordIndex - 1,
+                            )
                         )
-                    )
+                    }
+                    _updateModel.invoke(_state.value.model!!)
                 }
-                _updateModel.invoke(_state.value.model!!)
-            }
 
+            }
+        } catch (ex: Exception) {
+            if (BuildConfig.DEBUG) println(ex.toString())
         }
     }
 
@@ -336,12 +350,9 @@ object SpeechService : ViewModel() {
             end: Int,
             frame: Int
         ) {
-
-            try {
-                if (_wordIndex < _words.size) {
-                    updateProgress()
-                }
-            } catch (_: Exception) {}
+            if (_wordIndex < _words.size) {
+                updateProgress()
+            }
         }
 
         override fun onStop(utteranceId: String?, interrupted: Boolean) {

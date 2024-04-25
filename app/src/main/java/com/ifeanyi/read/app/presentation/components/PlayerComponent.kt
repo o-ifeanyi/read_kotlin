@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
@@ -60,11 +59,10 @@ fun PlayerComponent(expanded: Boolean, onClick: () -> Unit) {
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.fillMaxWidth(0.7f)
+                            modifier = Modifier.weight(1f)
                         )
-                    }
+                    } else Spacer(modifier = Modifier.weight(1f))
 
-                    Spacer(modifier = Modifier.weight(1f))
                     IconButton(
                         modifier = Modifier.size(35.dp),
                         onClick = { SpeechService.stop(true) },
@@ -72,7 +70,7 @@ fun PlayerComponent(expanded: Boolean, onClick: () -> Unit) {
                         Icon(
                             modifier = Modifier.size(35.dp),
                             imageVector = AppIcons.stop,
-                            contentDescription = "Play/Pause Button",
+                            contentDescription = "Stop Button",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
