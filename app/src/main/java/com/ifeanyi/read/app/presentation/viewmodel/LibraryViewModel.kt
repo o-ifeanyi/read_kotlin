@@ -54,10 +54,13 @@ class LibraryViewModel @Inject constructor(private val libraryRepository: Librar
     }
 
     fun deleteItem(file: FileModel) = viewModelScope.launch {
-        val uri = Uri.parse(file.path)
-        val localFile = File(uri.path ?: "")
-        if (localFile.exists()) {
-           localFile.delete()
+        val fileUri = Uri.parse(file.path)
+        if (File(fileUri.path ?: "").exists()) {
+            File(fileUri.path ?: "").delete()
+        }
+
+        if (file.cache != null) {
+            File(file.cache ?: "").delete()
         }
         libraryRepository.deleteItem(file)
     }

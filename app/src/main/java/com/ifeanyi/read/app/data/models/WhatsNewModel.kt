@@ -19,12 +19,12 @@ data class NewFeature(
 )
 
 val latestUpdate = WhatsNewModel(
-    id = "1.0.2",
+    id = "1.1.1",
     features = listOf(
         NewFeature(
             id = 0,
-            title = "Introducing Generative AI ✨",
-            body = "You now get an AI description of images that have no extractable text"
+            title = "Scan page 📖",
+            body = "Scan the pages of your favourite books with your camera and listen to them"
         ),
     )
 )

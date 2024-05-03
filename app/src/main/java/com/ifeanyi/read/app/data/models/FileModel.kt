@@ -13,7 +13,7 @@ import java.time.Instant
 import java.util.Date
 import java.util.UUID
 
-enum class LibraryType { Pdf, Img, Txt, Url }
+enum class LibraryType { Pdf, Img, Scan, Txt, Url }
 
 @Entity(tableName = "file_table")
 data class FileModel(
@@ -46,6 +46,7 @@ data class FileModel(
         return when (type) {
             LibraryType.Pdf -> AppIcons.doc
             LibraryType.Img -> AppIcons.image
+            LibraryType.Scan -> AppIcons.scan
             LibraryType.Txt -> AppIcons.text
             LibraryType.Url -> AppIcons.link
         }
@@ -72,7 +73,7 @@ data class FileModel(
 
     fun writeCache(context: Context, text: String) {
         try {
-            val path = "${context.filesDir.path}/${Instant.now()}"
+            val path = "${context.filesDir.path}/${Instant.now()}.txt"
             val outputFile = File(path)
             outputFile.writeText(text, Charsets.UTF_8)
 

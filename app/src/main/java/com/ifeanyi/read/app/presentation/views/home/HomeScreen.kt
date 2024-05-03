@@ -1,7 +1,8 @@
 package com.ifeanyi.read.app.presentation.views.home
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Activity.RESULT_OK
 import com.ifeanyi.read.app.data.models.FileModel
 import com.ifeanyi.read.app.data.models.LibraryType
 import com.ifeanyi.read.app.presentation.components.ListTileComponent
@@ -16,6 +17,7 @@ import com.ifeanyi.read.core.util.getName
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -39,11 +41,17 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.RESULT_FORMAT_JPEG
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.SCANNER_MODE_FULL
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
+import com.ifeanyi.read.core.services.AppStateService
+import com.ifeanyi.read.core.util.TextParser
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     controller: NavHostController,
@@ -92,6 +100,40 @@ fun HomeScreen(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { }
     )
+
+    val options = remember {
+        GmsDocumentScannerOptions.Builder()
+            .setGalleryImportAllowed(true)
+            .setPageLimit(2)
+            .setResultFormats(RESULT_FORMAT_JPEG)
+            .setScannerMode(SCANNER_MODE_FULL)
+            .build()
+    }
+    val scanner = remember { GmsDocumentScanning.getClient(options) }
+
+    val scannerLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+            onResult = { result ->
+                if (result.resultCode == RESULT_OK) {
+                    GmsDocumentScanningResult.fromActivityResultIntent(result.data)?.pages?.let { pages ->
+                        AnalyticService.track("scan_page")
+                        AppStateService.displayLoader()
+                        TextParser.scansToPdf(context, pages) { file ->
+                            AppStateService.removeLoader()
+                            if (file == null) return@scansToPdf
+                            val model = FileModel(
+                                name = file.name,
+                                type = LibraryType.Scan,
+                                path = file.toUri().toString(),
+                            )
+                            SpeechService.updateModel(model) {
+                                libraryVM.insertItem(it)
+                            }
+                        }
+                    }
+                }
+            }
+        )
 
     LaunchedEffect(key1 = Unit) {
         SpeechService.initSpeechService(context) {
@@ -151,6 +193,31 @@ fun HomeScreen(
                                 mediaType = ActivityResultContracts.PickVisualMedia.ImageAndVideo
                             )
                         )
+                    }
+                )
+            }
+
+            item {
+                ListTileComponent(
+                    asset = {
+                        Icon(
+                            imageVector = AppIcons.scan,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(50.dp)
+                        )
+                    },
+                    title = "Scan page",
+                    subtitle = "Listen to the content of a page",
+                    onClick = {
+                        scanner.getStartScanIntent(context as Activity)
+                            .addOnSuccessListener { intentSender ->
+                                scannerLauncher.launch(
+                                    IntentSenderRequest.Builder(intentSender).build()
+                                )
+                            }.addOnFailureListener {
+                                // handle errors here.
+                            }
                     }
                 )
             }

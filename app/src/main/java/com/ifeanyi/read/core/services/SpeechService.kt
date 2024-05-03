@@ -68,7 +68,7 @@ object SpeechService : ViewModel() {
         viewModelScope.launch {
             _state.update { it.copy(model = fileModel) }
             when (fileModel.type) {
-                LibraryType.Pdf -> {
+                LibraryType.Pdf, LibraryType.Scan -> {
                     val uri = Uri.parse(fileModel.path)
                     TextParser.parsePdf(
                         _appContext,

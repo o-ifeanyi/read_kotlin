@@ -83,7 +83,7 @@ fun EnterTextScreen(
             item {
                 AppButton(text = "Continue", enabled = text.value.isNotEmpty()) {
                     AnalyticService.track("enter_text")
-                    val path = "${context.filesDir.path}/${Instant.now()}"
+                    val path = "${context.filesDir.path}/${Instant.now()}.txt"
                     val outputFile = File(path)
                     outputFile.writeText(text.value, Charsets.UTF_8)
 

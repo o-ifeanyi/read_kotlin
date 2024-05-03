@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.ColorLens
 import androidx.compose.material.icons.outlined.CreateNewFolder
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.DocumentScanner
 import androidx.compose.material.icons.outlined.DriveFileRenameOutline
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.GridView
@@ -40,6 +41,7 @@ import androidx.compose.material.icons.rounded.Stop
 object AppIcons {
     val doc = Icons.AutoMirrored.Outlined.InsertDriveFile
     val image = Icons.Outlined.Image
+    val scan = Icons.Outlined.DocumentScanner
     val text = Icons.Outlined.TextFields
     val link = Icons.Rounded.Link
     val speaker = Icons.Outlined.RecordVoiceOver

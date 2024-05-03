@@ -22,8 +22,8 @@ android {
         applicationId = "com.ifeanyi.read"
         minSdk = 26
         targetSdk = 34
-        versionCode = 10
-        versionName = "1.0.9"
+        versionCode = 12
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -66,8 +66,9 @@ android {
 }
 
 dependencies {
-    // Room DB
+    // Room Database
     implementation("androidx.room:room-runtime:2.6.1")
+    // noinspection KaptUsageInsteadOfKsp
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     // PDF to text
@@ -77,7 +78,7 @@ dependencies {
     // URL to text
     implementation("org.jsoup:jsoup:1.14.3")
     // Font
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.5")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.7")
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
     // Coroutines
@@ -87,11 +88,9 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     // Material icons
-    implementation("androidx.compose.material:material-icons-extended:1.6.5")
-    // Fix PendingIntent crash
-    implementation("androidx.work:work-runtime:2.9.0")
-    // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.compose.material:material-icons-extended:1.6.7")
+    // Preferences
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
     // GSON
     implementation("com.google.code.gson:gson:2.10.1")
     // Media notification
@@ -99,11 +98,13 @@ dependencies {
     // Mixpanel
     implementation("com.mixpanel.android:mixpanel-android:7.5.0")
     // Gemini
-    implementation("com.google.ai.client.generativeai:generativeai:0.3.0")
+    implementation("com.google.ai.client.generativeai:generativeai:0.4.0")
+    // Scanner
+    implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0-beta1")
 
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.activity:activity-compose:1.9.0")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
