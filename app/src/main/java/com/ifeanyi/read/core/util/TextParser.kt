@@ -73,7 +73,7 @@ object TextParser {
                             try {
                                 AnalyticService.track("describe_image")
                                 val generativeModel = GenerativeModel(
-                                    modelName = "gemini-pro-vision",
+                                    modelName = "gemini-1.5-flash",
                                     apiKey = BuildConfig.GEMINI_KEY
                                 )
 
